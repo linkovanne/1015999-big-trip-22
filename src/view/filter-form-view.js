@@ -1,8 +1,8 @@
 import {createElement} from '../render';
 
 function createFilterFormTemplate() {
-  return `
-    <form class="trip-filters" action="#" method="get">
+  return (
+    `<form class="trip-filters" action="#" method="get">
       <div class="trip-filters__filter">
         <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything">
         <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
@@ -24,8 +24,8 @@ function createFilterFormTemplate() {
       </div>
 
       <button class="visually-hidden" type="submit">Accept filter</button>
-    </form>
-  `;
+    </form>`
+  );
 }
 
 export default class FilterFormView {
@@ -34,7 +34,7 @@ export default class FilterFormView {
   }
 
   getElement() {
-    if(!this.element) {
+    if (!this.element) {
       this.element = createElement(this.getTemplate());
     }
 

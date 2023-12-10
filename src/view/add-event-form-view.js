@@ -164,7 +164,7 @@ function createAddEvebtFormTemplate() {
         </section>
       </form>
     </li>`
-  )
+  );
 }
 
 export default class AddEventFormView {
@@ -173,7 +173,7 @@ export default class AddEventFormView {
   }
 
   getElement() {
-    if(!this.element) {
+    if (!this.element) {
       this.element = createElement(this.getTemplate());
     }
 

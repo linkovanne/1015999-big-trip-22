@@ -48,7 +48,7 @@ export default class EventItemView {
   }
 
   getElement() {
-    if(!this.element) {
+    if (!this.element) {
       this.element = createElement(this.getTemplate());
     }
 

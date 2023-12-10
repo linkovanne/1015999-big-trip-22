@@ -1,4 +1,4 @@
-import { render } from '../render';
+import {render} from '../render';
 import EventItemView from '../view/event-item-view';
 import EventListView from '../view/event-list-view';
 import SortFormView from '../view/sort-form-view';
@@ -7,7 +7,7 @@ import EditEventFormView from '../view/edit-event-form-view';
 export default class TripPresenter {
   eventListComponent = new EventListView();
 
-  constructor({ tripContainer }) {
+  constructor({tripContainer}) {
     this.tripContainer = tripContainer;
   }
 

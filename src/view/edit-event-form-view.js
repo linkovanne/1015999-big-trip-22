@@ -166,7 +166,7 @@ export default class EditEventFormView {
   }
 
   getElement() {
-    if(!this.element) {
+    if (!this.element) {
       this.element = createElement(this.getTemplate());
     }
 
