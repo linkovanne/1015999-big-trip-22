@@ -1,6 +1,6 @@
 import {createElement} from '../render';
 
-function createAddEvebtFormTemplate() {
+function createAddEventFormTemplate() {
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -169,7 +169,7 @@ function createAddEvebtFormTemplate() {
 
 export default class AddEventFormView {
   getTemplate() {
-    return createAddEvebtFormTemplate();
+    return createAddEventFormTemplate();
   }
 
   getElement() {
