@@ -19,9 +19,14 @@ export default class TripPresenter {
 
     render(new SortView(), this.tripContainer);
     render(this.eventListComponent, this.tripContainer);
-    render(new EditEventFormView(), this.eventListComponent.getElement());
 
-    for (let i = 0; i < this.events.length; i++) {
+    render(new EditEventFormView({
+      event: this.events[0],
+      offers: this.offers,
+      destinations: this.destinations
+    }), this.eventListComponent.getElement());
+
+    for (let i = 1; i < this.events.length; i++) {
       const currentEvent = this.events[i];
       const currentOffers = this.offers.find((offer) => offer.type === currentEvent.type)?.offers;
       const currentDestination = this.destinations.find((destination) => destination.id === currentEvent.destination);

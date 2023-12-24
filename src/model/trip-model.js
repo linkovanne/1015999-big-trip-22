@@ -3,12 +3,12 @@ import {destinations} from '../mock/destinations';
 import {offers} from '../mock/offers';
 
 export default class TripModel {
-  points = points;
+  events = points;
   offers = offers;
   destinations = destinations;
 
   getEvents() {
-    return this.points;
+    return this.events;
   }
 
   getOffers() {

@@ -9,7 +9,7 @@ export const points = [
     offers: [
       'b4c3e4e6-9053-42ce-b747-e281314baa31'
     ],
-    type: 'taxi' // taxi┃bus┃train┃ship┃drive┃flight┃check-in┃sightseeing┃restaurant
+    type: 'taxi'
   },
   {
     id: 'f4b62099-293f-4c3d-a702-94eec4a2808c',
@@ -22,7 +22,7 @@ export const points = [
       'b4c3e4e6-9053-42ce-b747-e281314baa32',
       'b4c3e4e6-9053-42ce-b747-e281314baa33'
     ],
-    type: 'flight' // taxi┃bus┃train┃ship┃drive┃flight┃check-in┃sightseeing┃restaurant
+    type: 'flight'
   },
   {
     id: 'f4b62099-293f-4c3d-a702-94eec4a2808b',
@@ -34,6 +34,6 @@ export const points = [
     offers: [
       'b4c3e4e6-9053-42ce-b747-e281314baa31'
     ],
-    type: 'taxi' // taxi┃bus┃train┃ship┃drive┃flight┃check-in┃sightseeing┃restaurant
+    type: 'taxi'
   }
 ];
