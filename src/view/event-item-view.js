@@ -1,23 +1,24 @@
 import {createElement} from '../render';
 import {getTimeOnWay, humaniseDate, humaniseTime} from '../utils';
 
-function createEventOfferTemplate() {
-  return (
-    `<span class="event__offer-title">Order Uber</span>
+function createEventOfferTemplate(offer) {
+  return (`
+    <li class="event__offer">
+      <span class='event__offer-title'>${offer.title}</span>
       &plus;&euro;&nbsp;
-    <span class="event__offer-price">20</span>`
-  );
+      <span class="event__offer-price">${offer.price}</span>
+    </li>
+  `);
 }
 
-function createEventItemTemplate(event) {
+function createEventItemTemplate(event, offersData, destination) {
   const { type, basePrice, dateFrom, dateTo, isFavorite, offers } = event;
+  const filteredOffers = offersData.filter((offer) => offers.indexOf(offer.id) >= 0);
   const date = humaniseDate(dateFrom);
   const timeFrom = humaniseTime(dateFrom);
   const timeTo = humaniseTime(dateTo);
   const timeOnWay = getTimeOnWay(dateFrom, dateTo);
   const favoriteBtnClassName = isFavorite ? 'event__favorite-btn--active' : '';
-
-  const offerTemplate = createEventOfferTemplate();
 
   return (
     `<li class="trip-events__item">
@@ -26,7 +27,7 @@ function createEventItemTemplate(event) {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} Amsterdam</h3>
+        <h3 class="event__title">${type} ${destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="2019-03-18T10:30">${timeFrom}</time>
@@ -40,7 +41,7 @@ function createEventItemTemplate(event) {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${offers.map(() => (`<li class="event__offer">${offerTemplate}</li>`)).join(' ')}
+          ${filteredOffers.map((offer) => createEventOfferTemplate(offer)).join(' ')}
         </ul>
         <button class="event__favorite-btn ${favoriteBtnClassName}" type="button">
           <span class="visually-hidden">Add to favorite</span>
@@ -57,12 +58,14 @@ function createEventItemTemplate(event) {
 }
 
 export default class EventItemView {
-  constructor({event}) {
+  constructor({event, offers, destination}) {
     this.event = event;
+    this.offers = offers;
+    this.destination = destination;
   }
 
   getTemplate() {
-    return createEventItemTemplate(this.event);
+    return createEventItemTemplate(this.event, this.offers, this.destination);
   }
 
   getElement() {

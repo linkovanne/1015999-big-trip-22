@@ -3,6 +3,11 @@ export const offers = [
     type: 'taxi', // Allowed: taxi┃bus┃train┃ship┃drive┃flight┃check-in┃sightseeing┃restaurant
     offers: [
       {
+        id: 'b4c3e4e6-9053-42ce-b747-e281314baa30',
+        title: 'Switch to comfort',
+        price: 80
+      },
+      {
         id: 'b4c3e4e6-9053-42ce-b747-e281314baa31',
         title: 'Upgrade to a business class',
         price: 120

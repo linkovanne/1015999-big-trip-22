@@ -7,20 +7,30 @@ import EditEventFormView from '../view/edit-event-form-view';
 export default class TripPresenter {
   eventListComponent = new EventListView();
 
-  constructor({tripContainer, tripsModel}) {
+  constructor({tripContainer, tripModel}) {
     this.tripContainer = tripContainer;
-    this.tripsModel = tripsModel;
+    this.tripModel = tripModel;
   }
 
   init() {
-    this.presenterEvents = [...this.tripsModel.getTrips()];
+    this.events = [...this.tripModel.getEvents()];
+    this.offers = [...this.tripModel.getOffers()];
+    this.destinations = [...this.tripModel.getDestinations()];
 
     render(new SortView(), this.tripContainer);
     render(this.eventListComponent, this.tripContainer);
     render(new EditEventFormView(), this.eventListComponent.getElement());
 
-    for (let i = 0; i < this.presenterEvents.length; i++) {
-      render(new EventItemView({event: this.presenterEvents[i]}), this.eventListComponent.getElement());
+    for (let i = 0; i < this.events.length; i++) {
+      const currentEvent = this.events[i];
+      const currentOffers = this.offers.find((offer) => offer.type === currentEvent.type)?.offers;
+      const currentDestination = this.destinations.find((destination) => destination.id === currentEvent.destination);
+
+      render(new EventItemView({
+        event: currentEvent,
+        offers: currentOffers,
+        destination: currentDestination
+      }), this.eventListComponent.getElement());
     }
   }
 }
