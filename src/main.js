@@ -1,4 +1,4 @@
-import {render} from './render';
+import {render} from './framework/render';
 import NewEventButtonView from './view/new-event-button-view';
 import FiltersView from './view/filters-view';
 import TripPresenter from './presenter/trip-presenter';

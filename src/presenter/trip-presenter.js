@@ -1,4 +1,4 @@
-import {render} from '../render';
+import {render} from '../framework/render';
 import EventItemView from '../view/event-item-view';
 import EventListView from '../view/event-list-view';
 import SortView from '../view/sort-view';
@@ -24,7 +24,7 @@ export default class TripPresenter {
       event: this.events[0],
       offers: this.offers,
       destinations: this.destinations
-    }), this.eventListComponent.getElement());
+    }), this.eventListComponent.element);
 
     for (let i = 1; i < this.events.length; i++) {
       const currentEvent = this.events[i];
@@ -35,7 +35,7 @@ export default class TripPresenter {
         event: currentEvent,
         offers: currentOffers,
         destination: currentDestination
-      }), this.eventListComponent.getElement());
+      }), this.eventListComponent.element);
     }
   }
 }

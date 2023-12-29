@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 import {humaniseFullDate} from '../utils';
 
 function createEventTypeItemTemplate(offerType) {
@@ -103,26 +103,15 @@ function createEditEventFormTemplate(event, offersList, destinations) {
   );
 }
 
-export default class EditEventFormView {
+export default class EditEventFormView extends AbstractView {
   constructor({event, offers, destinations}) {
+    super();
     this.event = event;
     this.offers = offers;
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createEditEventFormTemplate(this.event, this.offers, this.destinations);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

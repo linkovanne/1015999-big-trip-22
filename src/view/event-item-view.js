@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 import {getTimeOnWay, humaniseDate, humaniseTime} from '../utils';
 
 function createEventOfferTemplate(offer) {
@@ -57,26 +57,15 @@ function createEventItemTemplate(event, offersData, destination) {
   );
 }
 
-export default class EventItemView {
+export default class EventItemView extends AbstractView {
   constructor({event, offers, destination}) {
+    super();
     this.event = event;
     this.offers = offers;
     this.destination = destination;
   }
 
-  getTemplate() {
+  get template() {
     return createEventItemTemplate(this.event, this.offers, this.destination);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
