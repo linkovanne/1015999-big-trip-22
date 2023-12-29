@@ -5,37 +5,47 @@ import SortView from '../view/sort-view';
 import EditEventFormView from '../view/edit-event-form-view';
 
 export default class TripPresenter {
-  eventListComponent = new EventListView();
+  #tripContainer = null;
+  #tripModel = null;
+
+  #eventListComponent = new EventListView();
+
+  #events = [];
+  #offers = [];
+  #destinations = [];
 
   constructor({tripContainer, tripModel}) {
-    this.tripContainer = tripContainer;
-    this.tripModel = tripModel;
+    this.#tripContainer = tripContainer;
+    this.#tripModel = tripModel;
+  }
+
+  #renderEvent(event, offers, destination) {
+    const eventItem = new EventItemView({event, offers, destination});
+
+    render(eventItem, this.#eventListComponent.element);
+  }
+
+  #renderEditEventForm(event, offers, destinations) {
+    const editEventForm = new EditEventFormView({event, offers, destinations});
+
+    render(editEventForm, this.#eventListComponent.element);
   }
 
   init() {
-    this.events = [...this.tripModel.getEvents()];
-    this.offers = [...this.tripModel.getOffers()];
-    this.destinations = [...this.tripModel.getDestinations()];
+    this.#events = [...this.#tripModel.events];
+    this.#offers = [...this.#tripModel.offers];
+    this.#destinations = [...this.#tripModel.destinations];
 
-    render(new SortView(), this.tripContainer);
-    render(this.eventListComponent, this.tripContainer);
+    render(new SortView(), this.#tripContainer);
+    render(this.#eventListComponent, this.#tripContainer);
 
-    render(new EditEventFormView({
-      event: this.events[0],
-      offers: this.offers,
-      destinations: this.destinations
-    }), this.eventListComponent.element);
+    for (let i = 0; i < this.#events.length; i++) {
+      const currentEvent = this.#events[i];
+      const currentOffers = this.#offers.find((offer) => offer.type === currentEvent.type)?.offers;
+      const currentDestination = this.#destinations.find((destination) => destination.id === currentEvent.destination);
 
-    for (let i = 1; i < this.events.length; i++) {
-      const currentEvent = this.events[i];
-      const currentOffers = this.offers.find((offer) => offer.type === currentEvent.type)?.offers;
-      const currentDestination = this.destinations.find((destination) => destination.id === currentEvent.destination);
-
-      render(new EventItemView({
-        event: currentEvent,
-        offers: currentOffers,
-        destination: currentDestination
-      }), this.eventListComponent.element);
+      this.#renderEvent(currentEvent, currentOffers, currentDestination);
+      this.#renderEditEventForm(currentEvent, this.#offers, this.#destinations);
     }
   }
 }

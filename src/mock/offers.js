@@ -1,4 +1,4 @@
-export const offers = [
+const offers = [
   {
     type: 'taxi',
     offers: [
@@ -30,3 +30,7 @@ export const offers = [
     ]
   }
 ];
+
+export function getOffers() {
+  return offers;
+}
