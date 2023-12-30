@@ -107,16 +107,25 @@ export default class EditEventFormView extends AbstractView {
   #event = null;
   #offers = [];
   #destinations = [];
+  #handleFormSubmit = null;
 
-  constructor({event, offers, destinations}) {
+  constructor({event, offers, destinations, onFormSubmit}) {
     super();
 
     this.#event = event;
     this.#offers = offers;
     this.#destinations = destinations;
+
+    this.#handleFormSubmit = onFormSubmit;
+    this.element.querySelector('form').addEventListener('click', this.#formSubmitHandler);
   }
 
   get template() {
     return createEditEventFormTemplate(this.#event, this.#offers, this.#destinations);
   }
+
+  #formSubmitHandler = (ev) => {
+    ev.preventDefault();
+    this.#handleFormSubmit();
+  };
 }

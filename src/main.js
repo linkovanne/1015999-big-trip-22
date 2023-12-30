@@ -1,6 +1,3 @@
-import {render} from './framework/render';
-import NewEventButtonView from './view/new-event-button-view';
-import FiltersView from './view/filters-view';
 import TripPresenter from './presenter/trip-presenter';
 import TripModel from './model/trip-model';
 
@@ -11,10 +8,10 @@ const tripEventsElement = document.querySelector('.trip-events');
 const tripModel = new TripModel();
 
 const tripPresenter = new TripPresenter({
+  headerContainer: headerElement,
+  tripFiltersContainer: tripFiltersElement,
   tripContainer: tripEventsElement,
   tripModel
 });
 
-render(new NewEventButtonView(), headerElement);
-render(new FiltersView(), tripFiltersElement);
 tripPresenter.init();
