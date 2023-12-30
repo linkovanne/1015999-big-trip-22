@@ -37,17 +37,30 @@ export default class TripPresenter {
     const currentOffers = this.#offers.find((offer) => offer.type === event.type)?.offers;
     const currentDestination = this.#destinations.find((destination) => destination.id === event.destination);
 
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'ArrowUp') {
+        evt.preventDefault();
+        replaceFormToItem();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
     const eventItem = new EventItemView({
       event,
       offers: currentOffers,
       destination: currentDestination,
-      onEditClick: replaceItemToForm
+      onEditClick: () => {
+        replaceItemToForm();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
     });
     const editEventForm = new EditEventFormView({
       event,
       offers,
       destinations,
-      onFormSubmit: replaceFormToItem
+      onFormSubmit: () => {
+        replaceFormToItem();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
     });
 
     function replaceItemToForm() {

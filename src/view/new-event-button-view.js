@@ -18,8 +18,8 @@ export default class NewEventButtonView extends AbstractView {
     return createNewEventButtonTemplate();
   }
 
-  #clickHandler = (ev) => {
-    ev.preventDefault();
+  #clickHandler = (event) => {
+    event.preventDefault();
     this.#handleClick();
   };
 }

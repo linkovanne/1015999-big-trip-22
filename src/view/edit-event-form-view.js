@@ -124,8 +124,8 @@ export default class EditEventFormView extends AbstractView {
     return createEditEventFormTemplate(this.#event, this.#offers, this.#destinations);
   }
 
-  #formSubmitHandler = (ev) => {
-    ev.preventDefault();
+  #formSubmitHandler = (event) => {
+    event.preventDefault();
     this.#handleFormSubmit();
   };
 }
