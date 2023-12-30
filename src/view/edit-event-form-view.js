@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import {humaniseFullDate} from '../utils';
+import {humaniseFullDate} from '../utils/date';
 
 function createEventTypeItemTemplate(offerType) {
   return (`

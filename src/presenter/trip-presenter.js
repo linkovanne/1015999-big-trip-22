@@ -1,6 +1,7 @@
 import {render, replace} from '../framework/render';
 import EventItemView from '../view/event-item-view';
 import EventListView from '../view/event-list-view';
+import EmptyEventListView from '../view/empty-event-list-view';
 import SortView from '../view/sort-view';
 import EditEventFormView from '../view/edit-event-form-view';
 import NewEventButtonView from '../view/new-event-button-view';
@@ -19,7 +20,9 @@ export default class TripPresenter {
 
   #newEventButton = new NewEventButtonView({ onClick: this.#handleAddEventForm });
   #filters = new FiltersView();
+  #sort = new SortView();
   #eventListComponent = new EventListView();
+  #emptyEventListComponent = new EmptyEventListView();
 
   #addEventState = false;
   #events = [];
@@ -87,7 +90,12 @@ export default class TripPresenter {
 
     render(this.#newEventButton, this.#headerContainer);
     render(this.#filters, this.#tripFiltersContainer);
-    render(new SortView(), this.#tripContainer);
+
+    if (this.#events.length === 0) {
+      return render(this.#emptyEventListComponent, this.#tripContainer);
+    }
+
+    render(this.#sort, this.#tripContainer);
     render(this.#eventListComponent, this.#tripContainer);
 
     for (const event of this.#events) {

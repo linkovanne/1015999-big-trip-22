@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import {getTimeOnWay, humaniseDate, humaniseTime} from '../utils';
+import {getTimeOnWay, humaniseDate, humaniseTime} from '../utils/date';
 
 function createEventOfferTemplate(offer) {
   return (`
