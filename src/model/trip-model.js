@@ -1,21 +1,21 @@
-import {points} from '../mock/points';
-import {destinations} from '../mock/destinations';
-import {offers} from '../mock/offers';
+import {getEvents} from '../mock/points';
+import {getDestinations} from '../mock/destinations';
+import {getOffers} from '../mock/offers';
 
 export default class TripModel {
-  events = points;
-  offers = offers;
-  destinations = destinations;
+  #events = getEvents();
+  #offers = getOffers();
+  #destinations = getDestinations();
 
-  getEvents() {
-    return this.events;
+  get events() {
+    return this.#events;
   }
 
-  getOffers() {
-    return this.offers;
+  get offers() {
+    return this.#offers;
   }
 
-  getDestinations() {
-    return this.destinations;
+  get destinations() {
+    return this.#destinations;
   }
 }

@@ -1,4 +1,4 @@
-export const destinations = [
+const destinations = [
   {
     id: 'bfa5cb75-a1fe-4b77-a83c-0e528e910e04',
     description: 'Amsterdam, is a beautiful city, a true pearl, with crowded streets.',
@@ -22,3 +22,7 @@ export const destinations = [
     ]
   }
 ];
+
+export function getDestinations() {
+  return destinations;
+}
