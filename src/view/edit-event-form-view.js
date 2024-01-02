@@ -1,6 +1,17 @@
 import AbstractView from '../framework/view/abstract-view';
 import {humaniseFullDate} from '../utils/date';
 
+/**
+ * Filtered Offer item object
+ * @typedef {Object} FilteredOfferObjectData extends OfferItemObjectData
+ * @property {boolean} isChecked
+ */
+
+/**
+ * function that returns event type item
+ * @param {string} offerType
+ * @returns {string}
+ */
 function createEventTypeItemTemplate(offerType) {
   return (`
     <div class="event__type-item">
@@ -10,6 +21,11 @@ function createEventTypeItemTemplate(offerType) {
   `);
 }
 
+/**
+ * function that returns event selector item template
+ * @param {FilteredOfferObjectData} offer
+ * @returns {string}
+ */
 function createEventOfferSelectorTemplate(offer) {
   const {id, title, price, isChecked} = offer;
 
@@ -26,9 +42,22 @@ function createEventOfferSelectorTemplate(offer) {
   `);
 }
 
+/**
+ * function that returns event form template
+ * @param {EventObjectData} event
+ * @param {Array<OfferObjectData>} offersList
+ * @param {Array<DestinationObjectData>} destinations
+ * @return {string}
+ */
 function createEditEventFormTemplate(event, offersList, destinations) {
   const { type, basePrice, dateFrom, dateTo, destination, offers } = event;
+  /**
+   * @type {DestinationObjectData} filteredOffers
+   */
   const currentDestination = destinations.find((item) => item.id === destination);
+  /**
+   * @type {Array<FilteredOfferObjectData>} filteredOffers
+   */
   const filteredOffers = offersList
     .find((item) => item.type === type).offers
     .map((offer) => ({...offer, isChecked: offers.indexOf(offer.id) >= 0}));
@@ -105,9 +134,21 @@ function createEditEventFormTemplate(event, offersList, destinations) {
 }
 
 export default class EditEventFormView extends AbstractView {
+  /**
+   * @type {(null|EventObjectData)}
+   */
   #event = null;
+  /**
+   * @type {Array<OfferObjectData>}
+   */
   #offers = [];
+  /**
+   * @type {Array<DestinationObjectData>}
+   */
   #destinations = [];
+  /**
+   * @type {(null|function)}
+   */
   #handleFormSubmit = null;
 
   constructor({event, offers, destinations, onFormSubmit}) {
@@ -122,6 +163,10 @@ export default class EditEventFormView extends AbstractView {
   }
 
   get template() {
+    if(!this.#event) {
+      return '';
+    }
+
     return createEditEventFormTemplate(this.#event, this.#offers, this.#destinations);
   }
 

@@ -10,9 +10,21 @@ import FiltersView from '../view/filters-view';
 import {generateFilter} from '../mock/filter';
 
 export default class TripPresenter {
+  /**
+   * @type {(null|HTMLElement)}
+   */
   #headerContainer = null;
+  /**
+   * @type {(null|HTMLElement)}
+   */
   #tripFiltersContainer = null;
+  /**
+   * @type {(null|HTMLElement)}
+   */
   #tripContainer = null;
+  /**
+   * @type {(null|TripModel)}
+   */
   #tripModel = null;
 
   #handleAddEventForm = () => {
@@ -24,9 +36,21 @@ export default class TripPresenter {
   #eventListComponent = new EventListView();
   #emptyEventListComponent = new EmptyEventListView();
 
+  /**
+   * @type {boolean}
+   */
   #addEventState = false;
+  /**
+   * @type {Array}
+   */
   #events = [];
+  /**
+   * @type {Array}
+   */
   #offers = [];
+  /**
+   * @type {Array}
+   */
   #destinations = [];
 
   constructor({headerContainer, tripFiltersContainer, tripContainer, tripModel}) {
@@ -84,12 +108,18 @@ export default class TripPresenter {
   // }
 
   #renderFilters(events) {
+    /**
+     * @type Array<FilterOfferObjectData>
+     */
     const filters = generateFilter(events);
     const filtersComponent = new FiltersView({ filters });
 
     render(filtersComponent, this.#tripFiltersContainer);
   }
 
+  /**
+   * function to render page components
+   */
   init() {
     this.#events = [...this.#tripModel.events];
     this.#offers = [...this.#tripModel.offers];

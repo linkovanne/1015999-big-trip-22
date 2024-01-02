@@ -1,5 +1,11 @@
 import AbstractView from '../framework/view/abstract-view';
 
+/**
+ * function that returns filters form template
+ * @param {FilterOfferObjectData} filter
+ * @param {boolean} isChecked
+ * @return {string}
+ */
 function createFilterItemTemplate(filter, isChecked) {
   const {type, count} = filter;
 
@@ -10,6 +16,12 @@ function createFilterItemTemplate(filter, isChecked) {
     <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>
   </div>`);
 }
+
+/**
+ * function that returns filters form template
+ * @param {Array<FilterOfferObjectData>} filters
+ * @return {string}
+ */
 function createFiltersTemplate(filters) {
 
   return filters.length > 0 && (
@@ -22,6 +34,9 @@ function createFiltersTemplate(filters) {
 }
 
 export default class FiltersView extends AbstractView {
+  /**
+   * @type Array<FilterOfferObjectData>
+   */
   #filters = [];
 
   constructor({filters}) {

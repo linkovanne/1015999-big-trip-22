@@ -1,6 +1,10 @@
 import {filterType} from '../const';
 import {isCurrentEvent, isFutureEvent, isPastEvent} from './events';
 
+/**
+ * filters list object
+ * @type {{[key: string]: function}}
+ */
 const filter = {
   [filterType.EVERYTHING]: (events) => events,
   [filterType.FUTURE]: (events) => events.filter((event) => isFutureEvent(event.dateFrom)),
