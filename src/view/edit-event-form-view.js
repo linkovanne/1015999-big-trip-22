@@ -11,15 +11,16 @@ function createEventTypeItemTemplate(offerType) {
 }
 
 function createEventOfferSelectorTemplate(offer) {
-  const isChecked = offer.isSelected ? 'checked' : '';
+  const {id, title, price, isChecked} = offer;
 
   return (`
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${isChecked}>
-      <label class="event__offer-label" for="event-offer-luggage-1">
-        <span class="event__offer-title">${offer.title}</span>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}"
+        type="checkbox" name="event-offer-${id}" ${isChecked ? 'checked' : ''}>
+      <label class="event__offer-label" for="event-offer-${id}">
+        <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
+        <span class="event__offer-price">${price}</span>
       </label>
     </div>
   `);
@@ -30,7 +31,7 @@ function createEditEventFormTemplate(event, offersList, destinations) {
   const currentDestination = destinations.find((item) => item.id === destination);
   const filteredOffers = offersList
     .find((item) => item.type === type).offers
-    .map((offer) => ({...offer, isSelected: offers.indexOf(offer.id) >= 0}));
+    .map((offer) => ({...offer, isChecked: offers.indexOf(offer.id) >= 0}));
 
   return (
     `<li class="trip-events__item">
