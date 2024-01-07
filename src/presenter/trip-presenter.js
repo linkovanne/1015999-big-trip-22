@@ -1,13 +1,13 @@
-import {render, replace} from '../framework/render';
-import EventItemView from '../view/event-item-view';
+import {render} from '../framework/render';
 import EventListView from '../view/event-list-view';
 import EmptyEventListView from '../view/empty-event-list-view';
 import SortView from '../view/sort-view';
-import EditEventFormView from '../view/edit-event-form-view';
 import NewEventButtonView from '../view/new-event-button-view';
 import FiltersView from '../view/filters-view';
 // import AddEventFormView from '../view/add-event-form-view';
 import {generateFilter} from '../mock/filter';
+import EventPresenter from './event-presenter';
+import {updateEvent} from '../utils/common';
 
 export default class TripPresenter {
   /**
@@ -26,6 +26,10 @@ export default class TripPresenter {
    * @type {(null|TripModel)}
    */
   #tripModel = null;
+  /**
+   * @type {Map<string, EventPresenter>}
+   */
+  #eventPresenter = new Map();
 
   #handleAddEventForm = () => {
     this.#addEventState = !this.#addEventState;
@@ -60,46 +64,43 @@ export default class TripPresenter {
     this.#tripModel = tripModel;
   }
 
+  #handleModeChange = () => {
+    this.#eventPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  /**
+   * @method
+   * @param {(EventObjectData)} event
+   * @param {Array<OfferObjectData>} offers
+   * @param {Array<DestinationObjectData>} destinations
+   */
   #renderEvent(event, offers, destinations) {
-    const currentOffers = this.#offers.find((offer) => offer.type === event.type)?.offers;
-    const currentDestination = this.#destinations.find((destination) => destination.id === event.destination);
-
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'ArrowUp') {
-        evt.preventDefault();
-        replaceFormToItem();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-    const eventItem = new EventItemView({
-      event,
-      offers: currentOffers,
-      destination: currentDestination,
-      onEditClick: () => {
-        replaceItemToForm();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
-    });
-    const editEventForm = new EditEventFormView({
-      event,
-      offers,
-      destinations,
-      onFormSubmit: () => {
-        replaceFormToItem();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
+    const eventPresenter = new EventPresenter({
+      eventListContainer: this.#eventListComponent.element,
+      onEventChange: this.#handleEventChange,
+      onModeChange: this.#handleModeChange
     });
 
-    function replaceItemToForm() {
-      replace(editEventForm, eventItem);
-    }
-
-    function replaceFormToItem() {
-      replace(eventItem, editEventForm);
-    }
-
-    render(eventItem, this.#eventListComponent.element);
+    eventPresenter.init(event, offers, destinations);
+    this.#eventPresenter.set(event.id, eventPresenter);
   }
+
+  /**
+   * @method
+   * @param {(EventObjectData)} updatedEvent
+   */
+  #handleEventChange = (updatedEvent) => {
+    this.#events = updateEvent(this.#events, updatedEvent);
+    this.#eventPresenter.get(updatedEvent.id).init(updatedEvent, this.#offers, this.#destinations);
+  };
+
+  /**
+   * @method
+   */
+  // #clearEventList() {
+  //   this.#eventPresenter.forEach((presenter) => presenter.destroy());
+  //   this.#eventPresenter.clear();
+  // }
 
   // #renderAddEventForm() {
   //   const addEventForm = new AddEventFormView();
