@@ -7,11 +7,24 @@ import EditEventFormView from '../view/edit-event-form-view';
 import NewEventButtonView from '../view/new-event-button-view';
 import FiltersView from '../view/filters-view';
 // import AddEventFormView from '../view/add-event-form-view';
+import {generateFilter} from '../mock/filter';
 
 export default class TripPresenter {
+  /**
+   * @type {(null|HTMLElement)}
+   */
   #headerContainer = null;
+  /**
+   * @type {(null|HTMLElement)}
+   */
   #tripFiltersContainer = null;
+  /**
+   * @type {(null|HTMLElement)}
+   */
   #tripContainer = null;
+  /**
+   * @type {(null|TripModel)}
+   */
   #tripModel = null;
 
   #handleAddEventForm = () => {
@@ -19,14 +32,25 @@ export default class TripPresenter {
   };
 
   #newEventButton = new NewEventButtonView({ onClick: this.#handleAddEventForm });
-  #filters = new FiltersView();
-  #sort = new SortView();
+  #sortComponent = new SortView();
   #eventListComponent = new EventListView();
   #emptyEventListComponent = new EmptyEventListView();
 
+  /**
+   * @type {boolean}
+   */
   #addEventState = false;
+  /**
+   * @type {Array}
+   */
   #events = [];
+  /**
+   * @type {Array}
+   */
   #offers = [];
+  /**
+   * @type {Array}
+   */
   #destinations = [];
 
   constructor({headerContainer, tripFiltersContainer, tripContainer, tripModel}) {
@@ -83,19 +107,32 @@ export default class TripPresenter {
   //   render(addEventForm, this.#eventListComponent.element);
   // }
 
+  #renderFilters(events) {
+    /**
+     * @type Array<FilterOfferObjectData>
+     */
+    const filters = generateFilter(events);
+    const filtersComponent = new FiltersView({ filters });
+
+    render(filtersComponent, this.#tripFiltersContainer);
+  }
+
+  /**
+   * function to render page components
+   */
   init() {
     this.#events = [...this.#tripModel.events];
     this.#offers = [...this.#tripModel.offers];
     this.#destinations = [...this.#tripModel.destinations];
 
     render(this.#newEventButton, this.#headerContainer);
-    render(this.#filters, this.#tripFiltersContainer);
+    this.#renderFilters(this.#events);
 
     if (this.#events.length === 0) {
       return render(this.#emptyEventListComponent, this.#tripContainer);
     }
 
-    render(this.#sort, this.#tripContainer);
+    render(this.#sortComponent, this.#tripContainer);
     render(this.#eventListComponent, this.#tripContainer);
 
     for (const event of this.#events) {

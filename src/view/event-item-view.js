@@ -1,16 +1,30 @@
 import AbstractView from '../framework/view/abstract-view';
 import {getTimeOnWay, humaniseDate, humaniseTime} from '../utils/date';
 
+/**
+ * function that returns event offer item template
+ * @param {OfferItemObjectData} offer
+ * @return {string}
+ */
 function createEventOfferTemplate(offer) {
+  const {title, price} = offer;
+
   return (`
     <li class="event__offer">
-      <span class='event__offer-title'>${offer.title}</span>
+      <span class='event__offer-title'>${title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.price}</span>
+      <span class="event__offer-price">${price}</span>
     </li>
   `);
 }
 
+/**
+ * function that returns event item template
+ * @param {EventObjectData} event
+ * @param {Array<OfferItemObjectData>} offersData
+ * @param {DestinationObjectData} destination
+ * @return {string}
+ */
 function createEventItemTemplate(event, offersData, destination) {
   const { type, basePrice, dateFrom, dateTo, isFavorite, offers } = event;
   const filteredOffers = offersData.filter((offer) => offers.indexOf(offer.id) >= 0);
@@ -58,10 +72,22 @@ function createEventItemTemplate(event, offersData, destination) {
 }
 
 export default class EventItemView extends AbstractView {
+  /**
+   * @type {(null|EventObjectData)} event
+   */
   #event = null;
+  /**
+   * @type {Array<OfferItemObjectData>} offers
+   */
   #offers = [];
-  #destination = [];
+  /**
+   * @type {(null|DestinationObjectData)} destination
+   */
+  #destination = null;
 
+  /**
+   * @type {(null|function)} destination
+   */
   #handleEditClick = null;
 
   constructor({event, offers, destination, onEditClick}) {
@@ -76,6 +102,10 @@ export default class EventItemView extends AbstractView {
   }
 
   get template() {
+    if(!this.#event || !this.#destination) {
+      return '';
+    }
+
     return createEventItemTemplate(this.#event, this.#offers, this.#destination);
   }
 
