@@ -90,7 +90,12 @@ export default class EventItemView extends AbstractView {
    */
   #handleEditClick = null;
 
-  constructor({event, offers, destination, onEditClick}) {
+  /**
+   * @type {(null|function)} handleFavouriteClick
+   */
+  #handleFavouriteClick = null;
+
+  constructor({event, offers, destination, onEditClick, onFavouriteClick}) {
     super();
 
     this.#event = event;
@@ -99,6 +104,9 @@ export default class EventItemView extends AbstractView {
 
     this.#handleEditClick = onEditClick;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+
+    this.#handleFavouriteClick = onFavouriteClick;
+    this.element.querySelector('.event__favorite-icon').addEventListener('click', this.#favouriteClickHandler);
   }
 
   get template() {
@@ -112,5 +120,10 @@ export default class EventItemView extends AbstractView {
   #editClickHandler = (event) => {
     event.preventDefault();
     this.#handleEditClick();
+  };
+
+  #favouriteClickHandler = (event) => {
+    event.preventDefault();
+    this.#handleFavouriteClick();
   };
 }

@@ -5,8 +5,14 @@ import {getOffers} from '../mock/offers';
 /**
  * Event object
  * @typedef {Object} EventObjectData
- * @property {string} EventObjectData.name
- * @property {number} EventObjectData.age
+ * @property {string} id
+ * @property {number} basePrice
+ * @property {string} dateFrom
+ * @property {string} dateTo
+ * @property {string} destination
+ * @property {boolean} isFavorite
+ * @property {Array<string>} offers
+ * @property {string} type
  */
 /**
  * Offer item object
