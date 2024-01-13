@@ -73,7 +73,7 @@ function createEventItemTemplate(event, offersData, destination) {
 
 export default class EventItemView extends AbstractView {
   /**
-   * @type {(null|EventObjectData)} event
+   * @type {(EventObjectData)} event
    */
   #event = null;
   /**
@@ -81,7 +81,7 @@ export default class EventItemView extends AbstractView {
    */
   #offers = [];
   /**
-   * @type {(null|DestinationObjectData)} destination
+   * @type {DestinationObjectData} destination
    */
   #destination = null;
 
@@ -110,10 +110,6 @@ export default class EventItemView extends AbstractView {
   }
 
   get template() {
-    if(!this.#event || !this.#destination) {
-      return '';
-    }
-
     return createEventItemTemplate(this.#event, this.#offers, this.#destination);
   }
 

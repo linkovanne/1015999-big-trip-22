@@ -135,7 +135,7 @@ function createEditEventFormTemplate(event, offersList, destinations) {
 
 export default class EditEventFormView extends AbstractView {
   /**
-   * @type {(null|EventObjectData)}
+   * @type {EventObjectData}
    */
   #event = null;
   /**
@@ -147,7 +147,7 @@ export default class EditEventFormView extends AbstractView {
    */
   #destinations = [];
   /**
-   * @type {(null|function)}
+   * @type {function}
    */
   #handleFormSubmit = null;
 
@@ -163,10 +163,6 @@ export default class EditEventFormView extends AbstractView {
   }
 
   get template() {
-    if(!this.#event) {
-      return '';
-    }
-
     return createEditEventFormTemplate(this.#event, this.#offers, this.#destinations);
   }
 

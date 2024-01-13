@@ -14,7 +14,7 @@ function createSortItemTemplate(currentSortType, sortItem) {
   return (
     `<div class="trip-sort__item  trip-sort__item--${name}">
       <input id="sort-${name}" class="trip-sort__input  visually-hidden"
-        type="radio" name="trip-sort" value="sort-${name}" data-sort-type="${name}"
+        type="radio" name="trip-sort" value="${name}" data-sort-type="${name}"
         ${currentSortType === name ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
       <label class="trip-sort__btn" for="sort-${name}">${name}</label>
     </div>`
@@ -61,6 +61,6 @@ export default class SortView extends AbstractView {
       return;
     }
     event.preventDefault();
-    this.#handleSortTypeChange(event.target?.control?.dataset?.sortType);
+    this.#handleSortTypeChange(event.target?.control?.value);
   };
 }

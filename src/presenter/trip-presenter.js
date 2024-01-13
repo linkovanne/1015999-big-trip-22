@@ -13,19 +13,19 @@ import {sortByDay, sortByPrice, sortByTime} from '../utils/events';
 
 export default class TripPresenter {
   /**
-   * @type {(null|HTMLElement)}
+   * @type {HTMLElement}
    */
   #headerContainer = null;
   /**
-   * @type {(null|HTMLElement)}
+   * @type {HTMLElement}
    */
   #tripFiltersContainer = null;
   /**
-   * @type {(null|HTMLElement)}
+   * @type {HTMLElement}
    */
   #tripContainer = null;
   /**
-   * @type {(null|TripModel)}
+   * @type {TripModel}
    */
   #tripModel = null;
   /**
@@ -77,24 +77,22 @@ export default class TripPresenter {
 
   /**
    * @method
-   * @param {(EventObjectData)} event
-   * @param {Array<OfferObjectData>} offers
-   * @param {Array<DestinationObjectData>} destinations
+   * @param {EventObjectData} event
    */
-  #renderEvent(event, offers, destinations) {
+  #renderEvent(event) {
     const eventPresenter = new EventPresenter({
       eventListContainer: this.#eventListComponent.element,
       onEventChange: this.#handleEventChange,
       onModeChange: this.#handleModeChange
     });
 
-    eventPresenter.init(event, offers, destinations);
+    eventPresenter.init(event, this.#offers, this.#destinations);
     this.#eventPresenter.set(event.id, eventPresenter);
   }
 
   /**
    * @method
-   * @param {(EventObjectData)} updatedEvent
+   * @param {EventObjectData} updatedEvent
    */
   #handleEventChange = (updatedEvent) => {
     this.#events = updateEvent(this.#events, updatedEvent);
@@ -115,7 +113,7 @@ export default class TripPresenter {
     render(this.#eventListComponent, this.#tripContainer);
 
     for (const event of this.#events) {
-      this.#renderEvent(event, this.#offers, this.#destinations);
+      this.#renderEvent(event);
     }
   }
 
@@ -127,10 +125,9 @@ export default class TripPresenter {
 
   /**
    * @method
-   * @param {SortType} type
    */
-  #sortEvents(type) {
-    switch (type) {
+  #sortEvents() {
+    switch (this.#currentSortType) {
       case sortType.DAY:
         this.#events.sort(sortByDay);
         break;
@@ -142,7 +139,6 @@ export default class TripPresenter {
         break;
     }
 
-    this.#currentSortType = type;
   }
 
   /**
@@ -154,7 +150,8 @@ export default class TripPresenter {
       return;
     }
 
-    this.#sortEvents(type);
+    this.#currentSortType = type;
+    this.#sortEvents();
     this.#clearEventList();
     this.#renderEventList();
   };
