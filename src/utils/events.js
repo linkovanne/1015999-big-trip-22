@@ -34,4 +34,37 @@ function isPastEvent(date) {
   return dayjs(date).diff(CURRENT_DATE_START) < 0;
 }
 
-export {isFutureEvent, isCurrentEvent, isPastEvent};
+/**
+ * function to sort events by date
+ * @param {EventObjectData} eventA
+ * @param {EventObjectData} eventB
+ * @returns {number}
+ */
+function sortByDay(eventA, eventB) {
+  return dayjs(eventA.dateFrom).diff(eventB.dateFrom);
+}
+
+/**
+ * function to sort events by time
+ * @param {EventObjectData} eventA
+ * @param {EventObjectData} eventB
+ * @returns {number}
+ */
+function sortByTime(eventA, eventB) {
+  const eventAHours = dayjs(eventA.dateTo).diff(eventA.dateFrom, 'hour', true);
+  const eventBHours = dayjs(eventB.dateTo).diff(eventB.dateFrom, 'hour', true);
+
+  return eventAHours - eventBHours;
+}
+
+/**
+ * function to sort events by price
+ * @param {EventObjectData} eventA
+ * @param {EventObjectData} eventB
+ * @returns {number}
+ */
+function sortByPrice(eventA, eventB) {
+  return eventA.basePrice - eventB.basePrice;
+}
+
+export {isFutureEvent, isCurrentEvent, isPastEvent, sortByDay, sortByTime, sortByPrice};

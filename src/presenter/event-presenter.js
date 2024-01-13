@@ -10,23 +10,23 @@ const MODE = {
 export default class EventPresenter {
   #eventListContainer = null;
   /**
-   * @type {(null|function)}
+   * @type {function}
    */
   #handleEventChange = null;
   /**
-   * @type {(null|function)}
+   * @type {function}
    */
   #handleModeChange = null;
   /**
-   * @type {(null|EventItemView)}
+   * @type {?EventItemView}
    */
   #eventItem = null;
   /**
-   * @type {(null|EditEventFormView)}
+   * @type {?EditEventFormView}
    */
   #editEventForm = null;
   /**
-   * @type {(null|EventObjectData)}
+   * @type {?EventObjectData}
    */
   #event = null;
 
@@ -44,7 +44,7 @@ export default class EventPresenter {
   #replaceItemToForm() {
     replace(this.#editEventForm, this.#eventItem);
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#modeChangeHandler();
+    this.#handleModeChange();
     this.#mode = MODE.EDIT;
   }
 
@@ -61,10 +61,6 @@ export default class EventPresenter {
     }
   };
 
-  #editClickHandler = () => {
-    this.#replaceItemToForm();
-  };
-
   #favouriteClickHandler = () => {
     this.#event = {
       ...this.#event,
@@ -73,17 +69,9 @@ export default class EventPresenter {
     this.#handleEventChange(this.#event);
   };
 
-  #modeChangeHandler = () => {
-    this.#handleModeChange();
-  };
-
-  #handleFormSubmit = () => {
-    this.#replaceFormToItem();
-  };
-
   /**
    * @method
-   * @param {(EventObjectData)} event
+   * @param {EventObjectData} event
    * @param {Array<OfferObjectData>} offers
    * @param {Array<DestinationObjectData>} destinations
    */
@@ -99,14 +87,14 @@ export default class EventPresenter {
       event,
       offers: currentOffers,
       destination: currentDestination,
-      onEditClick: () => this.#editClickHandler(),
+      onEditClick: () => this.#replaceItemToForm(),
       onFavouriteClick: () => this.#favouriteClickHandler()
     });
     this.#editEventForm = new EditEventFormView({
       event,
       offers,
       destinations,
-      onFormSubmit: () => this.#handleFormSubmit()
+      onFormSubmit: () => this.#replaceFormToItem()
     });
 
     if(prevEventItem === null || prevEditEventForm === null) {

@@ -5,4 +5,18 @@ const filterType = {
   PAST: 'past'
 };
 
-export {filterType};
+/**
+ * @typedef {('day'|'event'|'time'|'price'|'offers')} SortType
+ */
+/**
+ * @type {{[key: string], SortType}}
+ */
+const sortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
+};
+
+export {filterType, sortType};
