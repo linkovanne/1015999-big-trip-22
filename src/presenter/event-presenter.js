@@ -18,15 +18,15 @@ export default class EventPresenter {
    */
   #handleModeChange = null;
   /**
-   * @type {EventItemView}
+   * @type {?EventItemView}
    */
   #eventItem = null;
   /**
-   * @type {EditEventFormView}
+   * @type {?EditEventFormView}
    */
   #editEventForm = null;
   /**
-   * @type {EventObjectData}
+   * @type {?EventObjectData}
    */
   #event = null;
 
@@ -71,7 +71,7 @@ export default class EventPresenter {
 
   /**
    * @method
-   * @param {(EventObjectData)} event
+   * @param {EventObjectData} event
    * @param {Array<OfferObjectData>} offers
    * @param {Array<DestinationObjectData>} destinations
    */

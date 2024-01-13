@@ -73,7 +73,7 @@ function createEventItemTemplate(event, offersData, destination) {
 
 export default class EventItemView extends AbstractView {
   /**
-   * @type {(EventObjectData)} event
+   * @type {?EventObjectData} event
    */
   #event = null;
   /**
@@ -81,17 +81,17 @@ export default class EventItemView extends AbstractView {
    */
   #offers = [];
   /**
-   * @type {DestinationObjectData} destination
+   * @type {?DestinationObjectData} destination
    */
   #destination = null;
 
   /**
-   * @type {(null|function)} destination
+   * @type {function} destination
    */
   #handleEditClick = null;
 
   /**
-   * @type {(null|function)} handleFavouriteClick
+   * @type {function} handleFavouriteClick
    */
   #handleFavouriteClick = null;
 

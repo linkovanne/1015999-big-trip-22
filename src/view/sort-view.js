@@ -35,7 +35,7 @@ export default class SortView extends AbstractView {
    */
   #currentSortType = sortType.DAY;
   /**
-   * @type {(null|function)}
+   * @type {function}
    */
   #handleSortTypeChange = null;
 
@@ -45,7 +45,7 @@ export default class SortView extends AbstractView {
     this.#currentSortType = currentSortType;
 
     this.#handleSortTypeChange = onSortTypeChange;
-    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+    this.element.addEventListener('change', this.#sortTypeChangeHandler);
   }
 
   get template() {
@@ -57,10 +57,11 @@ export default class SortView extends AbstractView {
    * @param {Event} event
    */
   #sortTypeChangeHandler = (event) => {
-    if (event.target?.control?.tagName !== 'INPUT' || event.target?.control.disabled) {
+    if (event.target?.tagName !== 'INPUT' || event.target?.disabled) {
       return;
     }
+
     event.preventDefault();
-    this.#handleSortTypeChange(event.target?.control?.value);
+    this.#handleSortTypeChange(event.target?.value);
   };
 }

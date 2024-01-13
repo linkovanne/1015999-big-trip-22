@@ -135,7 +135,7 @@ function createEditEventFormTemplate(event, offersList, destinations) {
 
 export default class EditEventFormView extends AbstractView {
   /**
-   * @type {EventObjectData}
+   * @type {?EventObjectData}
    */
   #event = null;
   /**
