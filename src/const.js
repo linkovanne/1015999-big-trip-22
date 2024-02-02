@@ -23,12 +23,12 @@ const UpdateType = {
 };
 
 /**
- * @typedef {('everything'|'future'|'present'|'past')} FilterType
+ * @typedef {('everything'|'future'|'present'|'past')} IFilterType
  */
 /**
- * @type {{[key: string], FilterType}}
+ * @type {{[key: string], IFilterType}}
  */
-const filterType = {
+const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
@@ -49,4 +49,4 @@ const sortType = {
   OFFERS: 'offers'
 };
 
-export {filterType, sortType, UserAction, UpdateType};
+export {FilterType, sortType, UserAction, UpdateType};
