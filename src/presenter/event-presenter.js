@@ -49,6 +49,7 @@ export default class EventPresenter {
   }
 
   #replaceFormToItem() {
+    this.#editEventForm.reset(this.#event);
     replace(this.#eventItem, this.#editEventForm);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = MODE.VIEW;

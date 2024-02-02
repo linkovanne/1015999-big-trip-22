@@ -1,3 +1,9 @@
+/**
+ * @typedef {('everything'|'future'|'present'|'past')} FilterType
+ */
+/**
+ * @type {{[key: string], FilterType}}
+ */
 const filterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',

@@ -39,13 +39,29 @@ export default class FiltersView extends AbstractView {
    * @type Array<FilterOfferObjectData>
    */
   #filters = [];
+  /**
+   * @type {function}
+   */
+  #handleFilterTypeChange = null;
 
-  constructor({filters}) {
+  constructor({filters, onFilterTypeChange}) {
     super();
     this.#filters = filters;
+    this.#handleFilterTypeChange = onFilterTypeChange;
+
+    this.element.addEventListener('change', this.#filterTypeChangeHandler);
   }
 
   get template() {
     return createFiltersTemplate(this.#filters);
   }
+
+  #filterTypeChangeHandler = (event) => {
+    if (event.target?.tagName !== 'INPUT' || event.target?.disabled) {
+      return;
+    }
+
+    event.preventDefault();
+    this.#handleFilterTypeChange(event.target?.value);
+  };
 }

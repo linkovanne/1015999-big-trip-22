@@ -7,9 +7,9 @@ import FiltersView from '../view/filters-view';
 // import AddEventFormView from '../view/add-event-form-view';
 import {generateFilter} from '../mock/filter';
 import EventPresenter from './event-presenter';
-import {sortType} from '../const';
+import {filterType, sortType} from '../const';
 import {updateEvent} from '../utils/common';
-import {sortByDay, sortByPrice, sortByTime} from '../utils/events';
+import {isCurrentEvent, isFutureEvent, isPastEvent, sortByDay, sortByPrice, sortByTime} from '../utils/events';
 
 export default class TripPresenter {
   /**
@@ -50,6 +50,10 @@ export default class TripPresenter {
   /**
    * @type {Array}
    */
+  #initEvents = [];
+  /**
+   * @type {Array}
+   */
   #events = [];
   /**
    * @type {Array}
@@ -63,6 +67,10 @@ export default class TripPresenter {
    * @type {SortType}
    */
   #currentSortType = sortType.DAY;
+  /**
+   * @type {FilterType}
+   */
+  #currentFilterType = filterType.EVERYTHING;
 
   constructor({headerContainer, tripFiltersContainer, tripContainer, tripModel}) {
     this.#headerContainer = headerContainer;
@@ -125,6 +133,41 @@ export default class TripPresenter {
 
   /**
    * @method
+   * @param {FilterType} type
+   */
+  #handleFilterChange = (type) => {
+    if (this.#currentFilterType === type) {
+      return;
+    }
+
+    this.#currentFilterType = type;
+    this.#filterEvents();
+    this.#clearEventList();
+    this.#renderEventList();
+  };
+
+  /**
+   * @method
+   */
+  #filterEvents() {
+    switch (this.#currentFilterType) {
+      case filterType.EVERYTHING:
+        this.#events = this.#initEvents;
+        break;
+      case filterType.FUTURE:
+        this.#events = this.#initEvents.filter((event) => isFutureEvent(event.dateFrom));
+        break;
+      case filterType.PRESENT:
+        this.#events = this.#initEvents.filter((event) => isCurrentEvent(event.dateFrom, event.dateTo));
+        break;
+      case filterType.PAST:
+        this.#events = this.#initEvents.filter((event) => isPastEvent(event.dateTo));
+        break;
+    }
+  }
+
+  /**
+   * @method
    */
   #sortEvents() {
     switch (this.#currentSortType) {
@@ -138,7 +181,6 @@ export default class TripPresenter {
         this.#events.sort(sortByPrice);
         break;
     }
-
   }
 
   /**
@@ -170,7 +212,7 @@ export default class TripPresenter {
      * @type Array<FilterOfferObjectData>
      */
     const filters = generateFilter(events);
-    const filtersComponent = new FiltersView({ filters });
+    const filtersComponent = new FiltersView({ filters, onFilterTypeChange: this.#handleFilterChange });
 
     render(filtersComponent, this.#tripFiltersContainer);
   }
@@ -179,7 +221,7 @@ export default class TripPresenter {
    * function to render page components
    */
   init() {
-    this.#events = [...this.#tripModel.events];
+    this.#initEvents = this.#events = [...this.#tripModel.events];
     this.#offers = [...this.#tripModel.offers];
     this.#destinations = [...this.#tripModel.destinations];
 
