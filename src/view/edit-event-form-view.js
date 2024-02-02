@@ -1,5 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humaniseFullDate} from '../utils/date';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 /**
  * Filtered Offer item object
@@ -119,18 +122,18 @@ function createEditEventFormTemplate(event, offersList, destinations) {
           </button>
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
+          ${filteredOffers.length > 0 ? `<section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
               ${filteredOffers.map((item) => createEventOfferSelectorTemplate(item)).join(' ')}
             </div>
-          </section>
+          </section>` : ''}
 
-          <section class="event__section  event__section--destination">
+          ${currentDestination.description ? `<section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${currentDestination.description}</p>
-          </section>
+          </section>` : ''}
         </section>
       </form>
     </li>`
@@ -138,6 +141,14 @@ function createEditEventFormTemplate(event, offersList, destinations) {
 }
 
 export default class EditEventFormView extends AbstractStatefulView {
+  /**
+   * @type {?flatpickr}
+   */
+  #datepickerFrom = null;
+  /**
+   * @type {?flatpickr}
+   */
+  #datepickerTo = null;
   /**
    * @type {Array<OfferObjectData>}
    */
@@ -189,8 +200,61 @@ export default class EditEventFormView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceChangeHandler);
-    this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersChangeHandler);
+    this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offersChangeHandler);
+
+    this.#setDatepickers();
   }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+  }
+
+  #setDatepickers() {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:m',
+        defaultDate: this._state.dateFrom,
+        enableTime: true,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        onChange: this.#dateFromChangeHandler
+      }
+    );
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:m',
+        defaultDate: this._state.dateTo,
+        enableTime: true,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        onChange: this.#dateToChangeHandler
+      }
+    );
+  }
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate
+    });
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate
+    });
+  };
 
   #destinationChangeHandler = (event) => {
     if (event.target?.tagName !== 'INPUT') {
