@@ -150,8 +150,16 @@ export default class EditEventFormView extends AbstractStatefulView {
    * @type {function}
    */
   #handleFormSubmit = null;
+  /**
+   * @type {function}
+   */
+  #handleFormReset = null;
+  /**
+   * @type {function}
+   */
+  #handleFormDelete = null;
 
-  constructor({event, offers, destinations, onFormSubmit}) {
+  constructor({event, offers, destinations, onFormSubmit, onFormReset, onFormDelete}) {
     super();
 
     this._setState(event);
@@ -159,6 +167,9 @@ export default class EditEventFormView extends AbstractStatefulView {
     this.#destinations = destinations;
 
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleFormReset = onFormReset;
+    this.#handleFormDelete = onFormDelete;
+
     this._restoreHandlers();
   }
 
@@ -171,32 +182,14 @@ export default class EditEventFormView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formResetHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('form').addEventListener('reset', this.#formDeleteHandler);
 
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceChangeHandler);
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersChangeHandler);
-  }
-
-  /**
-   * @method
-   * @param {EventObjectData} event
-   */
-  static parseEventToState(event) {
-    return {
-      ...event,
-      destinationDescription: '',
-      destinationName: ''
-    };
-  }
-
-  /**
-   * @method
-   */
-  static parseStateToEvent() {
-
   }
 
   #destinationChangeHandler = (event) => {
@@ -238,9 +231,9 @@ export default class EditEventFormView extends AbstractStatefulView {
   };
 
   #offersChangeHandler = (event) => {
-    // if (event.target?.tagName !== 'INPUT') {
-    //   return;
-    // }
+    if (event.target?.tagName !== 'INPUT') {
+      return;
+    }
     event.preventDefault();
     const offer = event.target?.value;
     const isSelected = this._state.offers.indexOf(offer) >= 0;
@@ -255,6 +248,16 @@ export default class EditEventFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (event) => {
     event.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this._state);
+  };
+
+  #formResetHandler = (event) => {
+    event.preventDefault();
+    this.#handleFormReset();
+  };
+
+  #formDeleteHandler = (event) => {
+    event.preventDefault();
+    this.#handleFormDelete(this._state.id);
   };
 }

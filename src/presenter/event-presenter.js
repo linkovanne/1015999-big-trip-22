@@ -41,18 +41,30 @@ export default class EventPresenter {
     this.#handleModeChange = onModeChange;
   }
 
-  #replaceItemToForm() {
+  #replaceItemToForm = () => {
     replace(this.#editEventForm, this.#eventItem);
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
     this.#mode = MODE.EDIT;
-  }
+  };
 
-  #replaceFormToItem() {
+  #replaceFormToItem = () => {
     this.#editEventForm.reset(this.#event);
     replace(this.#eventItem, this.#editEventForm);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = MODE.VIEW;
+  };
+
+  #handleFormSubmit = (event) => {
+    this.#handleEventChange(event);
+    this.#replaceFormToItem();
+  };
+
+  #deleteEvent(id) {
+    if(!id) {
+      return;
+    }
+    this.#replaceFormToItem();
   }
 
   #escKeyDownHandler = (evt) => {
@@ -95,7 +107,9 @@ export default class EventPresenter {
       event,
       offers,
       destinations,
-      onFormSubmit: () => this.#replaceFormToItem()
+      onFormSubmit: this.#handleFormSubmit,
+      onFormReset: this.#replaceFormToItem,
+      onFormDelete: this.#deleteEvent,
     });
 
     if(prevEventItem === null || prevEditEventForm === null) {
