@@ -322,6 +322,6 @@ export default class EditEventFormView extends AbstractStatefulView {
 
   #formDeleteHandler = (event) => {
     event.preventDefault();
-    this.#handleFormDelete(this._state.id);
+    this.#handleFormDelete(this._state);
   };
 }

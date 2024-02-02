@@ -1,3 +1,4 @@
+import Observable from '../framework/observable';
 import {getEvents} from '../mock/points';
 import {getDestinations} from '../mock/destinations';
 import {getOffers} from '../mock/offers';
@@ -37,7 +38,7 @@ import {getOffers} from '../mock/offers';
  * @property {Array<{src: string, description: string}>} pictures
  */
 
-export default class TripModel {
+export default class TripModel extends Observable {
   /**
    * events list
    * @type {Array<EventObjectData>}
@@ -64,5 +65,60 @@ export default class TripModel {
 
   get destinations() {
     return this.#destinations;
+  }
+
+  /**
+   * @method
+   * @param {UpdateType} updateType
+   * @param {EventObjectData} update
+   */
+  updateEvent(updateType, update) {
+    const index = this.#events.findIndex((event) => event.id === update.id);
+
+    if (index === -1) {
+      throw new Error('can\'t update unexciting event');
+    }
+
+    this.#events = [
+      ...this.#events.slice(0, index),
+      update,
+      ...this.#events.slice(index + 1),
+    ];
+
+    this._notify(updateType, update);
+  }
+
+  /**
+   * @method
+   * @param {UpdateType} updateType
+   * @param {EventObjectData} update
+   */
+  addEvent(updateType, update) {
+    this.#events = [
+      update,
+      ...this.#events
+    ];
+
+    this._notify(updateType, update);
+  }
+
+  /**
+   * @method
+   * @param {UpdateType} updateType
+   * @param {EventObjectData} update
+   */
+  deleteEvent(updateType, update) {
+    const index = this.#events.findIndex((event) => event.id === update.id);
+
+    if (index === -1) {
+      throw new Error('can\'t delete unexciting event');
+    }
+
+    this.#events = [
+      ...this.#events.slice(0, index),
+      ...this.#events.slice(index + 1),
+    ];
+
+    this._notify(updateType, {});
   }
 }

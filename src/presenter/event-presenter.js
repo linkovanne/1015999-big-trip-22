@@ -1,6 +1,8 @@
 import EventItemView from '../view/event-item-view';
 import EditEventFormView from '../view/edit-event-form-view';
 import {remove, render, replace} from '../framework/render';
+import {UpdateType, UserAction} from '../const';
+import {isSameDate} from '../utils/date';
 
 const MODE = {
   VIEW: 'VIEW',
@@ -56,16 +58,23 @@ export default class EventPresenter {
   };
 
   #handleFormSubmit = (event) => {
-    this.#handleEventChange(event);
+    const updateType = isSameDate(this.#event.dateFrom, event.dateFrom) ? UpdateType.PATCH : UpdateType.MINOR;
+
+    this.#handleEventChange(
+      UserAction.UPDATE_EVENT,
+      updateType,
+      event
+    );
     this.#replaceFormToItem();
   };
 
-  #deleteEvent(id) {
-    if(!id) {
-      return;
-    }
-    this.#replaceFormToItem();
-  }
+  #handleEventDelete = (event) => {
+    this.#handleEventChange(
+      UserAction.DELETE_EVENT,
+      UpdateType.MINOR,
+      event
+    );
+  };
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'ArrowUp') {
@@ -75,11 +84,11 @@ export default class EventPresenter {
   };
 
   #favouriteClickHandler = () => {
-    this.#event = {
-      ...this.#event,
-      isFavorite: !this.#event?.isFavorite
-    };
-    this.#handleEventChange(this.#event);
+    this.#handleEventChange(
+      UserAction.UPDATE_EVENT,
+      UpdateType.MINOR,
+      { ...this.#event, isFavorite: !this.#event?.isFavorite }
+    );
   };
 
   /**
@@ -109,7 +118,7 @@ export default class EventPresenter {
       destinations,
       onFormSubmit: this.#handleFormSubmit,
       onFormReset: this.#replaceFormToItem,
-      onFormDelete: this.#deleteEvent,
+      onFormDelete: this.#handleEventDelete,
     });
 
     if(prevEventItem === null || prevEditEventForm === null) {
