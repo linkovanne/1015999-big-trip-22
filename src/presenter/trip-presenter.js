@@ -2,11 +2,11 @@ import {remove, render} from '../framework/render';
 import EventListView from '../view/event-list-view';
 import EmptyEventListView from '../view/empty-event-list-view';
 import SortView from '../view/sort-view';
-import NewEventButtonView from '../view/new-event-button-view';
-// import AddEventFormView from '../view/add-event-form-view';
+import AddEventButtonView from '../view/add-event-button-view';
 import EventPresenter from './event-presenter';
 import FilterPresenter from './filter-presenter';
-import {sortType, UpdateType, UserAction} from '../const';
+import AddEventPresenter from './add-event-presenter';
+import {FilterType, SortType, UpdateType, UserAction} from '../const';
 import {sortByDay, sortByPrice, sortByTime} from '../utils/events';
 import {filter} from '../utils/filters';
 
@@ -35,25 +35,20 @@ export default class TripPresenter {
    * @type {Map<string, EventPresenter>}
    */
   #eventPresenter = new Map();
+  /**
+   * @type {AddEventPresenter}
+   */
+  #addEventPresenter = null;
 
-  #handleAddEventForm = () => {
-    this.#addEventState = !this.#addEventState;
-  };
-
-  #newEventButton = new NewEventButtonView({ onClick: this.#handleAddEventForm });
+  #addEventButton = null;
   #sortComponent = null;
   #eventListComponent = new EventListView();
   #emptyEventListComponent = new EmptyEventListView();
 
-
   /**
-   * @type {boolean}
+   * @type {ISortType}
    */
-  #addEventState = false;
-  /**
-   * @type {SortType}
-   */
-  #currentSortType = sortType.DAY;
+  #currentSortType = SortType.DAY;
 
   constructor({headerContainer, tripFiltersContainer, tripContainer, tripModel, filterModel}) {
     this.#headerContainer = headerContainer;
@@ -61,6 +56,14 @@ export default class TripPresenter {
     this.#tripContainer = tripContainer;
     this.#tripModel = tripModel;
     this.#filterModel = filterModel;
+
+    this.#addEventPresenter = new AddEventPresenter({
+      offers: this.offers,
+      destinations: this.destinations,
+      eventListContainer: this.#eventListComponent.element,
+      onEventChange: this.#handleViewAction,
+      onDestroy: this.#onAddEventDestroy
+    });
 
     this.#tripModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -72,11 +75,11 @@ export default class TripPresenter {
     const filteredEvents = filter[filterType](events);
 
     switch (this.#currentSortType) {
-      case sortType.DAY:
+      case SortType.DAY:
         return filteredEvents.sort(sortByDay);
-      case sortType.TIME:
+      case SortType.TIME:
         return filteredEvents.sort(sortByTime);
-      case sortType.PRICE:
+      case SortType.PRICE:
         return filteredEvents.sort(sortByPrice);
     }
 
@@ -92,6 +95,7 @@ export default class TripPresenter {
   }
 
   #handleModeChange = () => {
+    this.#addEventPresenter.destroy();
     this.#eventPresenter.forEach((presenter) => presenter.resetView());
   };
 
@@ -151,7 +155,23 @@ export default class TripPresenter {
     }
   };
 
+  #handleAddEventForm = () => {
+    this.#addEvent();
+    this.#addEventButton.element.disabled = true;
+  };
+
+  #addEvent() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#addEventPresenter.init();
+  }
+
+  #onAddEventDestroy = () => {
+    this.#addEventButton.element.disabled = false;
+  };
+
   #clearTrip({resetSortType = false} = {}) {
+    this.#addEventPresenter.destroy();
     this.#eventPresenter.forEach((presenter) => presenter.destroy());
     this.#eventPresenter.clear();
 
@@ -159,7 +179,7 @@ export default class TripPresenter {
     remove(this.#emptyEventListComponent);
 
     if (resetSortType) {
-      this.#currentSortType = sortType.DAY;
+      this.#currentSortType = SortType.DAY;
     }
   }
 
@@ -178,7 +198,7 @@ export default class TripPresenter {
 
   /**
    * @method
-   * @param {SortType} type
+   * @param {ISortType} type
    */
   #handleSortTypeChange = (type) => {
     if (this.#currentSortType === type) {
@@ -213,8 +233,8 @@ export default class TripPresenter {
    * function to render page components
    */
   init() {
-
-    render(this.#newEventButton, this.#headerContainer);
+    this.#addEventButton = new AddEventButtonView({ onClick: this.#handleAddEventForm });
+    render(this.#addEventButton, this.#headerContainer);
 
     this.#renderFilters();
     this.#renderTrip();

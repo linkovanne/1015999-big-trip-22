@@ -1,11 +1,11 @@
 import AbstractView from '../framework/view/abstract-view';
-import {sortType} from '../const';
+import {SortType} from '../const';
 import {sort} from '../utils/sort';
 
 /**
  * method to create item of sort form
  * @method
- * @param {SortType} currentSortType
+ * @param {ISortType} currentSortType
  * @param {SortTypeItemObject} sortItem
  */
 function createSortItemTemplate(currentSortType, sortItem) {
@@ -31,9 +31,9 @@ function createSortTemplate(currentSortType) {
 
 export default class SortView extends AbstractView {
   /**
-   * @type {SortType}
+   * @type {ISortType}
    */
-  #currentSortType = sortType.DAY;
+  #currentSortType = SortType.DAY;
   /**
    * @type {function}
    */

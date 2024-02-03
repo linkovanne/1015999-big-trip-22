@@ -36,12 +36,12 @@ const FilterType = {
 };
 
 /**
- * @typedef {('day'|'event'|'time'|'price'|'offers')} SortType
+ * @typedef {('day'|'event'|'time'|'price'|'offers')} ISortType
  */
 /**
- * @type {{[key: string], SortType}}
+ * @type {{[key: string], ISortType}}
  */
-const sortType = {
+const SortType = {
   DAY: 'day',
   EVENT: 'event',
   TIME: 'time',
@@ -49,4 +49,4 @@ const sortType = {
   OFFERS: 'offers'
 };
 
-export {FilterType, sortType, UserAction, UpdateType};
+export {FilterType, SortType, UserAction, UpdateType};

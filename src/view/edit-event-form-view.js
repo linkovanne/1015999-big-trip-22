@@ -66,8 +66,8 @@ function createEditEventFormTemplate(event, offersList, destinations) {
    * @type {Array<FilteredOfferObjectData>} filteredOffers
    */
   const filteredOffers = offersList
-    .find((item) => item.type === type).offers
-    .map((offer) => ({...offer, isChecked: offers.indexOf(offer.id) >= 0}));
+    .find((item) => item.type === type)?.offers
+    .map((offer) => ({...offer, isChecked: offers.indexOf(offer?.id) >= 0}));
 
   return (
     `<li class="trip-events__item">
@@ -93,7 +93,7 @@ function createEditEventFormTemplate(event, offersList, destinations) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination?.name}" list="destination-list-1">
             <datalist id="destination-list-1">
               ${destinations.map((item) => `<option value="${item.name}"></option>`).join('')}
             </datalist>
@@ -133,6 +133,14 @@ function createEditEventFormTemplate(event, offersList, destinations) {
           ${currentDestination.description ? `<section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${currentDestination.description}</p>
+
+            ${currentDestination?.pictures.length > 0 ? `<div class="event__photos-container">
+              <div class="event__photos-tape">
+                ${currentDestination?.pictures.map((photo) => (`<img
+                  class="event__photo" src="${photo.src}" alt="${photo.description}"
+                  >`)).join('')}
+              </div>
+            </div>` : ''}
           </section>` : ''}
         </section>
       </form>

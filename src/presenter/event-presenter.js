@@ -76,9 +76,9 @@ export default class EventPresenter {
     );
   };
 
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'ArrowUp') {
-      evt.preventDefault();
+  #escKeyDownHandler = (event) => {
+    if (event.key === 'Escape' || event.key === 'ArrowUp') {
+      event.preventDefault();
       this.#replaceFormToItem();
     }
   };
