@@ -1,4 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
+import {isControlType, isDisabledControl} from '../utils/common';
 
 /**
  * function that returns filters form template
@@ -62,7 +63,7 @@ export default class FiltersView extends AbstractView {
   }
 
   #filterTypeChangeHandler = (event) => {
-    if (event.target?.tagName !== 'INPUT' || event.target?.disabled) {
+    if (isControlType(event, 'INPUT') || isDisabledControl(event)) {
       return;
     }
 

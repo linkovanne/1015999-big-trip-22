@@ -1,6 +1,7 @@
 import AbstractView from '../framework/view/abstract-view';
 import {SortType} from '../const';
 import {sort} from '../utils/sort';
+import {isControlType, isDisabledControl} from '../utils/common';
 
 /**
  * method to create item of sort form
@@ -57,7 +58,7 @@ export default class SortView extends AbstractView {
    * @param {Event} event
    */
   #sortTypeChangeHandler = (event) => {
-    if (event.target?.tagName !== 'INPUT' || event.target?.disabled) {
+    if (isControlType(event, 'INPUT') || isDisabledControl(event)) {
       return;
     }
 

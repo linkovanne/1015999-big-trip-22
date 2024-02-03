@@ -2,7 +2,7 @@ import EventItemView from '../view/event-item-view';
 import EditEventFormView from '../view/edit-event-form-view';
 import {remove, render, replace} from '../framework/render';
 import {UpdateType, UserAction} from '../const';
-import {isSameDate} from '../utils/date';
+import {isKeyType} from '../utils/common';
 
 const MODE = {
   VIEW: 'VIEW',
@@ -58,11 +58,9 @@ export default class EventPresenter {
   };
 
   #handleFormSubmit = (event) => {
-    const updateType = isSameDate(this.#event.dateFrom, event.dateFrom) ? UpdateType.PATCH : UpdateType.MINOR;
-
     this.#handleEventChange(
       UserAction.UPDATE_EVENT,
-      updateType,
+      UpdateType.MINOR,
       event
     );
     this.#replaceFormToItem();
@@ -77,7 +75,7 @@ export default class EventPresenter {
   };
 
   #escKeyDownHandler = (event) => {
-    if (event.key === 'Escape' || event.key === 'ArrowUp') {
+    if (isKeyType(event, 'Escape')) {
       event.preventDefault();
       this.#replaceFormToItem();
     }

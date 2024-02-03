@@ -1,7 +1,8 @@
-import {remove, render, RenderPosition} from '../framework/render';
-import {UpdateType, UserAction} from '../const';
-import EditEventFormView from '../view/edit-event-form-view';
 import dayjs from 'dayjs';
+import {remove, render, RenderPosition} from '../framework/render';
+import EditEventFormView from '../view/edit-event-form-view';
+import {UpdateType, UserAction} from '../const';
+import {isKeyType} from '../utils/common';
 
 export default class AddEventPresenter {
   #offers = [];
@@ -88,7 +89,7 @@ export default class AddEventPresenter {
   };
 
   #escKeyDownHandler = (event) => {
-    if (event.key === 'Escape' || event.key === 'Esc') {
+    if (isKeyType(event, 'Escape')) {
       event.preventDefault();
       this.destroy();
     }

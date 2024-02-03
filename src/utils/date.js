@@ -48,16 +48,5 @@ function getTimeOnWay(dateFrom, dateTo) {
   return dateFrom && dateTo && `${hours}H ${minutes}M`;
 }
 
-/**
- * function to compare two dates
- * @param {string|null} dateA
- * @param {string|null} dateB
- * @returns {boolean}
- */
-function isSameDate(dateA, dateB) {
-  return (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
-}
-
-
-export {humaniseFullDate, humaniseDate, humaniseTime, getTimeOnWay, isSameDate};
+export {humaniseFullDate, humaniseDate, humaniseTime, getTimeOnWay};
 

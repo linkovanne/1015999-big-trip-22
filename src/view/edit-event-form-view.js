@@ -1,6 +1,7 @@
+import flatpickr from 'flatpickr';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humaniseFullDate} from '../utils/date';
-import flatpickr from 'flatpickr';
+import {isControlType} from '../utils/common';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -130,7 +131,7 @@ function createEditEventFormTemplate(event, offersList, destinations) {
             </div>
           </section>` : ''}
 
-          ${currentDestination.description ? `<section class="event__section  event__section--destination">
+          ${currentDestination?.description ? `<section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${currentDestination.description}</p>
 
@@ -252,20 +253,20 @@ export default class EditEventFormView extends AbstractStatefulView {
     );
   }
 
-  #dateFromChangeHandler = ([userDate]) => {
+  #dateFromChangeHandler = ([dateFrom]) => {
     this.updateElement({
-      dateFrom: userDate
+      dateFrom
     });
   };
 
-  #dateToChangeHandler = ([userDate]) => {
+  #dateToChangeHandler = ([dateTo]) => {
     this.updateElement({
-      dateTo: userDate
+      dateTo
     });
   };
 
   #destinationChangeHandler = (event) => {
-    if (event.target?.tagName !== 'INPUT') {
+    if (isControlType(event, 'INPUT')) {
       return;
     }
     event.preventDefault();
@@ -278,7 +279,7 @@ export default class EditEventFormView extends AbstractStatefulView {
   };
 
   #eventTypeChangeHandler = (event) => {
-    if (event.target?.tagName !== 'INPUT') {
+    if (isControlType(event, 'INPUT')) {
       return;
     }
     event.preventDefault();
@@ -291,7 +292,7 @@ export default class EditEventFormView extends AbstractStatefulView {
   };
 
   #priceChangeHandler = (event) => {
-    if (event.target?.tagName !== 'INPUT') {
+    if (isControlType(event, 'INPUT')) {
       return;
     }
     event.preventDefault();
@@ -303,14 +304,14 @@ export default class EditEventFormView extends AbstractStatefulView {
   };
 
   #offersChangeHandler = (event) => {
-    if (event.target?.tagName !== 'INPUT') {
+    if (isControlType(event, 'INPUT')) {
       return;
     }
     event.preventDefault();
     const offer = event.target?.value;
     const isSelected = this._state.offers.indexOf(offer) >= 0;
     const offers = isSelected
-      ? this._state.offers.filter((of) => of !== offer)
+      ? this._state.offers.filter((offerItem) => offerItem !== offer)
       : [...this._state.offers, offer];
 
     this.updateElement({

@@ -73,18 +73,7 @@ export default class TripModel extends Observable {
    * @param {EventObjectData} update
    */
   updateEvent(updateType, update) {
-    const index = this.#events.findIndex((event) => event.id === update.id);
-
-    if (index === -1) {
-      throw new Error('can\'t update unexciting event');
-    }
-
-    this.#events = [
-      ...this.#events.slice(0, index),
-      update,
-      ...this.#events.slice(index + 1),
-    ];
-
+    this.#events = this.#events.map((event) => event.id === update.id ? update : event);
     this._notify(updateType, update);
   }
 
@@ -108,17 +97,7 @@ export default class TripModel extends Observable {
    * @param {EventObjectData} update
    */
   deleteEvent(updateType, update) {
-    const index = this.#events.findIndex((event) => event.id === update.id);
-
-    if (index === -1) {
-      throw new Error('can\'t delete unexciting event');
-    }
-
-    this.#events = [
-      ...this.#events.slice(0, index),
-      ...this.#events.slice(index + 1),
-    ];
-
+    this.#events = this.#events.filter((event) => event.id !== update.id);
     this._notify(updateType, {});
   }
 }
