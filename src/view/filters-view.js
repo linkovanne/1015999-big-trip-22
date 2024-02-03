@@ -1,14 +1,15 @@
 import AbstractView from '../framework/view/abstract-view';
+import {isControlType, isDisabledControl} from '../utils/common';
 
 /**
  * function that returns filters form template
  * @param {FilterOfferObjectData} filter
- * @param {boolean} isChecked
+ * @param {IFilterType} currentFilterType
  * @return {string}
  */
-function createFilterItemTemplate(filter, isChecked) {
+function createFilterItemTemplate(filter, currentFilterType) {
   const {type, count} = filter;
-  const checked = isChecked ? 'checked' : '';
+  const checked = filter.type === currentFilterType ? 'checked' : '';
   const disabled = count > 0 ? '' : 'disabled';
 
   return (`<div class="trip-filters__filter">
@@ -21,13 +22,13 @@ function createFilterItemTemplate(filter, isChecked) {
 /**
  * function that returns filters form template
  * @param {Array<FilterOfferObjectData>} filters
+ * @param {IFilterType} currentFilterType
  * @return {string}
  */
-function createFiltersTemplate(filters) {
-
+function createFiltersTemplate(filters, currentFilterType) {
   return filters.length > 0 && (
     `<form class="trip-filters" action="#" method="get">
-        ${filters.map((filter, index) => createFilterItemTemplate(filter, index === 0)).join('')}
+        ${filters.map((filter) => createFilterItemTemplate(filter, currentFilterType)).join('')}
 
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>`
@@ -35,6 +36,10 @@ function createFiltersTemplate(filters) {
 }
 
 export default class FiltersView extends AbstractView {
+  /**
+   * @type {?IFilterType}
+   */
+  #currentFilterType = null;
   /**
    * @type Array<FilterOfferObjectData>
    */
@@ -44,20 +49,21 @@ export default class FiltersView extends AbstractView {
    */
   #handleFilterTypeChange = null;
 
-  constructor({filters, onFilterTypeChange}) {
+  constructor({filters, currentFilterType, onFilterTypeChange}) {
     super();
     this.#filters = filters;
+    this.#currentFilterType = currentFilterType;
     this.#handleFilterTypeChange = onFilterTypeChange;
 
     this.element.addEventListener('change', this.#filterTypeChangeHandler);
   }
 
   get template() {
-    return createFiltersTemplate(this.#filters);
+    return createFiltersTemplate(this.#filters, this.#currentFilterType);
   }
 
   #filterTypeChangeHandler = (event) => {
-    if (event.target?.tagName !== 'INPUT' || event.target?.disabled) {
+    if (isControlType(event, 'INPUT') || isDisabledControl(event)) {
       return;
     }
 

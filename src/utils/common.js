@@ -1,11 +1,13 @@
-/**
- * @method
- * @param {(Array<EventObjectData>)} events
- * @param {(EventObjectData)} updatedEvent
- * @return {(Array<EventObjectData>)} events
- */
-function updateEvent(events, updatedEvent) {
-  return events.map((event) => event.id === updatedEvent.id ? updatedEvent : event);
+function isDisabledControl(event) {
+  return event.target?.disabled;
 }
 
-export {updateEvent};
+function isControlType(event, type) {
+  return event.target?.tagName !== type;
+}
+
+function isKeyType(event, key) {
+  return event.key === key;
+}
+
+export {isDisabledControl, isControlType, isKeyType};

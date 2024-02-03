@@ -1,11 +1,12 @@
 import AbstractView from '../framework/view/abstract-view';
-import {sortType} from '../const';
+import {SortType} from '../const';
 import {sort} from '../utils/sort';
+import {isControlType, isDisabledControl} from '../utils/common';
 
 /**
  * method to create item of sort form
  * @method
- * @param {SortType} currentSortType
+ * @param {ISortType} currentSortType
  * @param {SortTypeItemObject} sortItem
  */
 function createSortItemTemplate(currentSortType, sortItem) {
@@ -31,9 +32,9 @@ function createSortTemplate(currentSortType) {
 
 export default class SortView extends AbstractView {
   /**
-   * @type {SortType}
+   * @type {ISortType}
    */
-  #currentSortType = sortType.DAY;
+  #currentSortType = SortType.DAY;
   /**
    * @type {function}
    */
@@ -57,7 +58,7 @@ export default class SortView extends AbstractView {
    * @param {Event} event
    */
   #sortTypeChangeHandler = (event) => {
-    if (event.target?.tagName !== 'INPUT' || event.target?.disabled) {
+    if (isControlType(event, 'INPUT') || isDisabledControl(event)) {
       return;
     }
 

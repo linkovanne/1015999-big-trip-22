@@ -1,10 +1,34 @@
 /**
- * @typedef {('everything'|'future'|'present'|'past')} FilterType
+ * @typedef {('UPDATE_EVENT' | 'ADD_EVENT' | 'DELETE_EVENT')} UserActionType
  */
 /**
- * @type {{[key: string], FilterType}}
+ * @type {{[key: string], UserActionType}}
  */
-const filterType = {
+const UserAction = {
+  UPDATE_EVENT: 'UPDATE_EVENT',
+  ADD_EVENT: 'ADD_EVENT',
+  DELETE_EVENT: 'DELETE_EVENT',
+};
+
+/**
+ * @typedef {('PATCH' | 'MINOR' | 'MAJOR')} UpdateType
+ */
+/**
+ * @type {{[key: string], UpdateType}}
+ */
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR'
+};
+
+/**
+ * @typedef {('everything'|'future'|'present'|'past')} IFilterType
+ */
+/**
+ * @type {{[key: string], IFilterType}}
+ */
+const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
@@ -12,12 +36,12 @@ const filterType = {
 };
 
 /**
- * @typedef {('day'|'event'|'time'|'price'|'offers')} SortType
+ * @typedef {('day'|'event'|'time'|'price'|'offers')} ISortType
  */
 /**
- * @type {{[key: string], SortType}}
+ * @type {{[key: string], ISortType}}
  */
-const sortType = {
+const SortType = {
   DAY: 'day',
   EVENT: 'event',
   TIME: 'time',
@@ -25,4 +49,4 @@ const sortType = {
   OFFERS: 'offers'
 };
 
-export {filterType, sortType};
+export {FilterType, SortType, UserAction, UpdateType};

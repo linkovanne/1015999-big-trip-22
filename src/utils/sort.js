@@ -1,8 +1,8 @@
-import {sortType} from '../const';
+import {SortType} from '../const';
 
 /**
  * @typedef {Object} SortTypeItemObject
- * @property {SortType} name
+ * @property {ISortType} name
  * @property {boolean} disabled
  */
 /**
@@ -10,11 +10,11 @@ import {sortType} from '../const';
  * @type {{[key: string]: SortTypeItemObject}}
  */
 const sort = {
-  [sortType.DAY]: { name: sortType.DAY, disabled: false },
-  [sortType.EVENT]: { name: sortType.EVENT, disabled: true },
-  [sortType.TIME]: { name: sortType.TIME, disabled: false },
-  [sortType.PRICE]: { name: sortType.PRICE, disabled: false },
-  [sortType.OFFERS]: { name: sortType.OFFERS, disabled: true }
+  [SortType.DAY]: { name: SortType.DAY, disabled: false },
+  [SortType.EVENT]: { name: SortType.EVENT, disabled: true },
+  [SortType.TIME]: { name: SortType.TIME, disabled: false },
+  [SortType.PRICE]: { name: SortType.PRICE, disabled: false },
+  [SortType.OFFERS]: { name: SortType.OFFERS, disabled: true }
 };
 
 export {sort};
