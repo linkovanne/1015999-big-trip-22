@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humaniseFullDate} from '../utils/date';
 
 /**
@@ -9,14 +9,18 @@ import {humaniseFullDate} from '../utils/date';
 
 /**
  * function that returns event type item
+ * @param {string} type
  * @param {string} offerType
  * @returns {string}
  */
-function createEventTypeItemTemplate(offerType) {
+function createEventTypeItemTemplate(type, offerType) {
+  const checked = type === offerType ? 'checked' : '';
+
   return (`
     <div class="event__type-item">
-      <input id="event-type-${offerType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offerType}">
-      <label class="event__type-label  event__type-label--${offerType}" for="event-type-${offerType}-1">${offerType}</label>
+      <input id="event-type-${offerType}" class="event__type-input visually-hidden" type="radio"
+        name="event-type" value="${offerType}" ${checked}>
+      <label class="event__type-label event__type-label--${offerType}" for="event-type-${offerType}">${offerType}</label>
     </div>
   `);
 }
@@ -32,7 +36,7 @@ function createEventOfferSelectorTemplate(offer) {
   return (`
     <div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}"
-        type="checkbox" name="event-offer-${id}" ${isChecked ? 'checked' : ''}>
+        type="checkbox" name="event-offer-${id}" value="${id}" ${isChecked ? 'checked' : ''}>
       <label class="event__offer-label" for="event-offer-${id}">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -77,7 +81,7 @@ function createEditEventFormTemplate(event, offersList, destinations) {
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
 
-                ${offersList.map((offer) => (createEventTypeItemTemplate(offer.type))).join(' ')}
+                ${offersList.map((offer) => (createEventTypeItemTemplate(type, offer.type))).join(' ')}
               </fieldset>
             </div>
           </div>
@@ -88,7 +92,7 @@ function createEditEventFormTemplate(event, offersList, destinations) {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-1">
             <datalist id="destination-list-1">
-              ${destinations.map((item) => `<option value="${item.name}"></option>`)}
+              ${destinations.map((item) => `<option value="${item.name}"></option>`).join('')}
             </datalist>
           </div>
 
@@ -133,11 +137,7 @@ function createEditEventFormTemplate(event, offersList, destinations) {
   );
 }
 
-export default class EditEventFormView extends AbstractView {
-  /**
-   * @type {?EventObjectData}
-   */
-  #event = null;
+export default class EditEventFormView extends AbstractStatefulView {
   /**
    * @type {Array<OfferObjectData>}
    */
@@ -150,24 +150,114 @@ export default class EditEventFormView extends AbstractView {
    * @type {function}
    */
   #handleFormSubmit = null;
+  /**
+   * @type {function}
+   */
+  #handleFormReset = null;
+  /**
+   * @type {function}
+   */
+  #handleFormDelete = null;
 
-  constructor({event, offers, destinations, onFormSubmit}) {
+  constructor({event, offers, destinations, onFormSubmit, onFormReset, onFormDelete}) {
     super();
 
-    this.#event = event;
+    this._setState(event);
     this.#offers = offers;
     this.#destinations = destinations;
 
     this.#handleFormSubmit = onFormSubmit;
-    this.element.querySelector('form').addEventListener('click', this.#formSubmitHandler);
+    this.#handleFormReset = onFormReset;
+    this.#handleFormDelete = onFormDelete;
+
+    this._restoreHandlers();
   }
 
   get template() {
-    return createEditEventFormTemplate(this.#event, this.#offers, this.#destinations);
+    return createEditEventFormTemplate(this._state, this.#offers, this.#destinations);
   }
+
+  reset(event) {
+    this.updateElement(event);
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formResetHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('form').addEventListener('reset', this.#formDeleteHandler);
+
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceChangeHandler);
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersChangeHandler);
+  }
+
+  #destinationChangeHandler = (event) => {
+    if (event.target?.tagName !== 'INPUT') {
+      return;
+    }
+    event.preventDefault();
+    const destinationName = event.target?.value;
+    const destination = this.#destinations.find((d) => d.name === destinationName)?.id;
+
+    this.updateElement({
+      destination,
+    });
+  };
+
+  #eventTypeChangeHandler = (event) => {
+    if (event.target?.tagName !== 'INPUT') {
+      return;
+    }
+    event.preventDefault();
+    const type = event.target?.value;
+
+    this.updateElement({
+      type: type,
+      offers: []
+    });
+  };
+
+  #priceChangeHandler = (event) => {
+    if (event.target?.tagName !== 'INPUT') {
+      return;
+    }
+    event.preventDefault();
+    const price = event.target?.value;
+
+    this._setState({
+      basePrice: price
+    });
+  };
+
+  #offersChangeHandler = (event) => {
+    if (event.target?.tagName !== 'INPUT') {
+      return;
+    }
+    event.preventDefault();
+    const offer = event.target?.value;
+    const isSelected = this._state.offers.indexOf(offer) >= 0;
+    const offers = isSelected
+      ? this._state.offers.filter((of) => of !== offer)
+      : [...this._state.offers, offer];
+
+    this.updateElement({
+      offers,
+    });
+  };
 
   #formSubmitHandler = (event) => {
     event.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this._state);
+  };
+
+  #formResetHandler = (event) => {
+    event.preventDefault();
+    this.#handleFormReset();
+  };
+
+  #formDeleteHandler = (event) => {
+    event.preventDefault();
+    this.#handleFormDelete(this._state.id);
   };
 }
