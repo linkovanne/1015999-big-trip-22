@@ -25,7 +25,7 @@ function createEventOfferTemplate(offer) {
  * @param {DestinationObjectData} destination
  * @return {string}
  */
-function createEventItemTemplate(event, offersData, destination) {
+function createEventTemplate(event, offersData, destination) {
   const { type, basePrice, dateFrom, dateTo, isFavorite, offers } = event;
   const filteredOffers = offersData.filter((offer) => offers.indexOf(offer.id) >= 0);
   const date = humaniseDate(dateFrom);
@@ -71,7 +71,7 @@ function createEventItemTemplate(event, offersData, destination) {
   );
 }
 
-export default class EventItemView extends AbstractView {
+export default class EventView extends AbstractView {
   /**
    * @type {?EventObjectData} event
    */
@@ -110,7 +110,7 @@ export default class EventItemView extends AbstractView {
   }
 
   get template() {
-    return createEventItemTemplate(this.#event, this.#offers, this.#destination);
+    return createEventTemplate(this.#event, this.#offers, this.#destination);
   }
 
   #editClickHandler = (event) => {

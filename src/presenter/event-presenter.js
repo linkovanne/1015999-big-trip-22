@@ -1,4 +1,4 @@
-import EventItemView from '../view/event-item-view';
+import EventView from '../view/event-view';
 import EditEventFormView from '../view/edit-event-form-view';
 import {remove, render, replace} from '../framework/render';
 import {UpdateType, UserAction} from '../const';
@@ -20,7 +20,7 @@ export default class EventPresenter {
    */
   #handleModeChange = null;
   /**
-   * @type {?EventItemView}
+   * @type {?EventView}
    */
   #eventItem = null;
   /**
@@ -103,7 +103,7 @@ export default class EventPresenter {
     const prevEventItem = this.#eventItem;
     const prevEditEventForm = this.#editEventForm;
 
-    this.#eventItem = new EventItemView({
+    this.#eventItem = new EventView({
       event,
       offers: currentOffers,
       destination: currentDestination,
