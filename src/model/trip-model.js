@@ -82,6 +82,8 @@ export default class TripModel extends Observable {
       this.#events = [];
       this.#destinations = [];
       this.#offers = [];
+      this._notify(UpdateType.ERROR, {});
+      return;
     }
 
     this._notify(UpdateType.INIT, {});

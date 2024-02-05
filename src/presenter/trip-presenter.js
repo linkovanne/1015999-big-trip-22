@@ -1,8 +1,9 @@
 import {remove, render, replace} from '../framework/render';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 import TripView from '../view/trip-view';
 import EmptyTripView from '../view/empty-trip-view';
 import LoadingTripView from '../view/loading-trip-view';
-// import FailedTripView from '../view/failed-trip-view';
+import FailedTripView from '../view/failed-trip-view';
 import SortView from '../view/sort-view';
 import AddEventButtonView from '../view/add-event-button-view';
 import EventPresenter from './event-presenter';
@@ -11,6 +12,11 @@ import AddEventPresenter from './add-event-presenter';
 import {FilterType, SortType, UpdateType, UserAction} from '../const';
 import {sortByDay, sortByPrice, sortByTime} from '../utils/events';
 import {filter} from '../utils/filters';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class TripPresenter {
   /**
@@ -47,7 +53,11 @@ export default class TripPresenter {
   #tripComponent = new TripView();
   #emptyTripComponent = new EmptyTripView();
   #loadingTripComponent = new LoadingTripView();
-  // #failedTripComponent = new FailedTripView();
+  #failedTripComponent = new FailedTripView();
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   /**
    * @type {boolean}
@@ -64,14 +74,6 @@ export default class TripPresenter {
     this.#tripContainer = tripContainer;
     this.#tripModel = tripModel;
     this.#filterModel = filterModel;
-
-    this.#addEventPresenter = new AddEventPresenter({
-      offers: this.offers,
-      destinations: this.destinations,
-      eventListContainer: this.#tripComponent.element,
-      onEventChange: this.#handleViewAction,
-      onDestroy: this.#onAddEventDestroy
-    });
 
     this.#tripModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -128,18 +130,37 @@ export default class TripPresenter {
    * @param {UpdateType} updateType
    * @param {EventObjectData} update
    */
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this.#tripModel.updateEvent(updateType, update);
+        this.#eventPresenter.get(update.id).setSaving();
+        try {
+          await this.#tripModel.updateEvent(updateType, update);
+        } catch (error) {
+          this.#eventPresenter.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_EVENT:
-        this.#tripModel.addEvent(updateType, update);
+        this.#addEventPresenter.setSaving();
+        try {
+          await this.#tripModel.addEvent(updateType, update);
+        } catch (error) {
+          this.#addEventPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_EVENT:
-        this.#tripModel.deleteEvent(updateType, update);
+        this.#eventPresenter.get(update.id).setDeleting();
+        try {
+          await this.#tripModel.deleteEvent(updateType, update);
+        } catch (error) {
+          this.#eventPresenter.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   /**
@@ -164,14 +185,31 @@ export default class TripPresenter {
         this.#isLoading = false;
         remove(this.#loadingTripComponent);
         this.#renderTrip();
+        this.#createAddEventPresenter();
+        this.#addEventButton.updateElement({disabled: false});
+        break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        this.#addEventButton.updateElement({disabled: true});
+        this.#renderFailedState();
+        this.#removeTrip();
         break;
     }
   };
 
+  #createAddEventPresenter = () => {
+    this.#addEventPresenter = new AddEventPresenter({
+      offers: this.offers,
+      destinations: this.destinations,
+      eventListContainer: this.#tripComponent.element,
+      onEventChange: this.#handleViewAction,
+      onDestroy: this.#onAddEventDestroy
+    });
+  };
+
   #handleAddEventForm = () => {
     this.#addEvent();
-    this.#renderAddEventButton({disabled: true});
-    // this.#addEventButton.element.disabled = true;
+    this.#addEventButton.updateElement({disabled: true});
   };
 
   #addEvent() {
@@ -181,8 +219,7 @@ export default class TripPresenter {
   }
 
   #onAddEventDestroy = () => {
-    this.#renderAddEventButton({disabled: false});
-    // this.#addEventButton.element.disabled = false;
+    this.#addEventButton.updateElement({disabled: false});
   };
 
   #clearTrip({resetSortType = false} = {}) {
@@ -215,6 +252,17 @@ export default class TripPresenter {
     for (const event of this.events) {
       this.#renderEvent(event);
     }
+  }
+
+  #removeTrip() {
+    remove(this.#sortComponent);
+    remove(this.#tripComponent);
+    remove(this.#emptyTripComponent);
+    remove(this.#loadingTripComponent);
+  }
+
+  #renderFailedState() {
+    render(this.#failedTripComponent, this.#tripContainer);
   }
 
   /**
@@ -250,9 +298,10 @@ export default class TripPresenter {
     filterPresenter.init();
   }
 
-  #renderAddEventButton({disabled = false} = {}) {
+  #renderAddEventButton() {
     const prevAddEventButton = this.#addEventButton;
-    this.#addEventButton = new AddEventButtonView({disabled, onClick: this.#handleAddEventForm});
+    this.#addEventButton = new AddEventButtonView({onClick: this.#handleAddEventForm});
+    this.#addEventButton.updateElement({disabled: this.#isLoading});
 
     if (prevAddEventButton === null) {
       render(this.#addEventButton, this.#headerContainer);

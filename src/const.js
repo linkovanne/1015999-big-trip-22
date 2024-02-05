@@ -11,13 +11,14 @@ const UserAction = {
 };
 
 /**
- * @typedef {('INIT' | 'PATCH' | 'MINOR' | 'MAJOR')} UpdateType
+ * @typedef {('INIT' | 'ERROR' | 'PATCH' | 'MINOR' | 'MAJOR')} UpdateType
  */
 /**
  * @type {{[key: string], UpdateType}}
  */
 const UpdateType = {
   INIT: 'INIT',
+  ERROR: 'ERROR',
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR'
@@ -50,4 +51,15 @@ const SortType = {
   OFFERS: 'offers'
 };
 
-export {FilterType, SortType, UserAction, UpdateType};
+/**
+ * @typedef {('ADD' | 'EDIT')} IFormScene
+ */
+/**
+ * @type {{[key: string], IFormScene}}
+ */
+const FormScene = {
+  ADD: 'ADD',
+  EDIT: 'EDIT',
+};
+
+export {FilterType, SortType, UserAction, UpdateType, FormScene};

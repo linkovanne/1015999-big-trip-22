@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {remove, render, RenderPosition} from '../framework/render';
 import EditEventFormView from '../view/edit-event-form-view';
-import {UpdateType, UserAction} from '../const';
+import {FormScene, UpdateType, UserAction} from '../const';
 import {isKeyType} from '../utils/common';
 
 export default class AddEventPresenter {
@@ -32,7 +32,6 @@ export default class AddEventPresenter {
 
   #generateEmptyForm() {
     return {
-      id: '',
       basePrice: 0,
       dateFrom: dayjs().startOf('day').toISOString(),
       dateTo: dayjs().endOf('day').toISOString(),
@@ -49,6 +48,7 @@ export default class AddEventPresenter {
     }
 
     this.#eventEditComponent = new EditEventFormView({
+      scene: FormScene.ADD,
       event: this.#generateEmptyForm(),
       offers: this.#offers,
       destinations: this.#destinations,
@@ -79,10 +79,26 @@ export default class AddEventPresenter {
     this.#handleEventChange(
       UserAction.ADD_EVENT,
       UpdateType.MINOR,
-      {id: Math.random(), ...event},
+      event,
     );
-    this.destroy();
   };
+
+  setSaving() {
+    this.#eventEditComponent.updateElement({
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#eventEditComponent.updateElement({
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#eventEditComponent.shake(resetFormState);
+  }
 
   #handleDeleteClick = () => {
     this.destroy();
