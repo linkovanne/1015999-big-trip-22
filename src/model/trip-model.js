@@ -1,7 +1,5 @@
 import Observable from '../framework/observable';
-import {getEvents} from '../mock/points';
-import {getDestinations} from '../mock/destinations';
-import {getOffers} from '../mock/offers';
+import {UpdateType} from '../const';
 
 /**
  * Event object
@@ -39,21 +37,28 @@ import {getOffers} from '../mock/offers';
  */
 
 export default class TripModel extends Observable {
+  #tripApiService = null;
   /**
    * events list
    * @type {Array<EventObjectData>}
    */
-  #events = getEvents();
+  #events = [];
   /**
    * offers list
    * @type {Array<OfferObjectData>}
    */
-  #offers = getOffers();
+  #offers = [];
   /**
    * destinations list
    * @type {Array<DestinationObjectData>}
    */
-  #destinations = getDestinations();
+  #destinations = [];
+
+  constructor({tripApiService}) {
+    super();
+
+    this.#tripApiService = tripApiService;
+  }
 
   get events() {
     return this.#events;
@@ -67,14 +72,19 @@ export default class TripModel extends Observable {
     return this.#destinations;
   }
 
-  /**
-   * @method
-   * @param {UpdateType} updateType
-   * @param {EventObjectData} update
-   */
-  updateEvent(updateType, update) {
-    this.#events = this.#events.map((event) => event.id === update.id ? update : event);
-    this._notify(updateType, update);
+  async init() {
+    try {
+      const events = await this.#tripApiService.points;
+      this.#events = events.map(this.#adaptEventToClient);
+      this.#destinations = await this.#tripApiService.destinations;
+      this.#offers = await this.#tripApiService.offers;
+    } catch(err) {
+      this.#events = [];
+      this.#destinations = [];
+      this.#offers = [];
+    }
+
+    this._notify(UpdateType.INIT, {});
   }
 
   /**
@@ -82,13 +92,16 @@ export default class TripModel extends Observable {
    * @param {UpdateType} updateType
    * @param {EventObjectData} update
    */
-  addEvent(updateType, update) {
-    this.#events = [
-      update,
-      ...this.#events
-    ];
+  async updateEvent(updateType, update) {
+    try {
+      const response = await this.#tripApiService.updateEvent(update);
+      const updatedEvent = this.#adaptEventToClient(response);
 
-    this._notify(updateType, update);
+      this.#events = this.#events.map((event) => event.id === updatedEvent.id ? updatedEvent : event);
+      this._notify(updateType, updatedEvent);
+    } catch(err) {
+      throw new Error('Can\'t update event');
+    }
   }
 
   /**
@@ -96,8 +109,51 @@ export default class TripModel extends Observable {
    * @param {UpdateType} updateType
    * @param {EventObjectData} update
    */
-  deleteEvent(updateType, update) {
-    this.#events = this.#events.filter((event) => event.id !== update.id);
-    this._notify(updateType, {});
+  async addEvent(updateType, update) {
+    try {
+      const response = await this.#tripApiService.addEvent(update);
+      const newEvent = this.#adaptEventToClient(response);
+      this.#events = [
+        newEvent,
+        ...this.#events
+      ];
+      this._notify(updateType, newEvent);
+    } catch(err) {
+      throw new Error('Can\'t add event');
+    }
+  }
+
+  /**
+   * @method
+   * @param {UpdateType} updateType
+   * @param {EventObjectData} update
+   */
+  async deleteEvent(updateType, update) {
+    try {
+      await this.#tripApiService.deleteEvent(update);
+
+      this.#events = this.#events.filter((event) => event.id !== update.id);
+      this._notify(updateType, {});
+    } catch(err) {
+      throw new Error('Can\'t delete event');
+    }
+  }
+
+  #adaptEventToClient(event) {
+    const adaptedEvent = {
+      ...event,
+      dateFrom: event['date_from'] !== null ? new Date(event['date_from']) : event['date_from'], // На клиенте дата хранится как экземпляр Date
+      dateTo: event['date_to'] !== null ? new Date(event['date_to']) : event['date_to'], // На клиенте дата хранится как экземпляр Date
+      basePrice: event['base_price'],
+      isFavorite: event['is_favorite'],
+    };
+
+    // remove unnecessary keys
+    delete adaptedEvent['date_from'];
+    delete adaptedEvent['date_to'];
+    delete adaptedEvent['base_price'];
+    delete adaptedEvent['is_favorite'];
+
+    return adaptedEvent;
   }
 }

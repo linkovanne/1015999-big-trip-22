@@ -11,12 +11,13 @@ const UserAction = {
 };
 
 /**
- * @typedef {('PATCH' | 'MINOR' | 'MAJOR')} UpdateType
+ * @typedef {('INIT' | 'PATCH' | 'MINOR' | 'MAJOR')} UpdateType
  */
 /**
  * @type {{[key: string], UpdateType}}
  */
 const UpdateType = {
+  INIT: 'INIT',
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR'

@@ -1,6 +1,8 @@
-import {remove, render} from '../framework/render';
-import EventListView from '../view/event-list-view';
-import EmptyEventListView from '../view/empty-event-list-view';
+import {remove, render, replace} from '../framework/render';
+import TripView from '../view/trip-view';
+import EmptyTripView from '../view/empty-trip-view';
+import LoadingTripView from '../view/loading-trip-view';
+// import FailedTripView from '../view/failed-trip-view';
 import SortView from '../view/sort-view';
 import AddEventButtonView from '../view/add-event-button-view';
 import EventPresenter from './event-presenter';
@@ -42,9 +44,15 @@ export default class TripPresenter {
 
   #addEventButton = null;
   #sortComponent = null;
-  #eventListComponent = new EventListView();
-  #emptyEventListComponent = new EmptyEventListView();
+  #tripComponent = new TripView();
+  #emptyTripComponent = new EmptyTripView();
+  #loadingTripComponent = new LoadingTripView();
+  // #failedTripComponent = new FailedTripView();
 
+  /**
+   * @type {boolean}
+   */
+  #isLoading = true;
   /**
    * @type {ISortType}
    */
@@ -60,7 +68,7 @@ export default class TripPresenter {
     this.#addEventPresenter = new AddEventPresenter({
       offers: this.offers,
       destinations: this.destinations,
-      eventListContainer: this.#eventListComponent.element,
+      eventListContainer: this.#tripComponent.element,
       onEventChange: this.#handleViewAction,
       onDestroy: this.#onAddEventDestroy
     });
@@ -72,7 +80,7 @@ export default class TripPresenter {
   get events() {
     const filterType = this.#filterModel.filter;
     const events = this.#tripModel.events;
-    const filteredEvents = filter[filterType](events);
+    const filteredEvents = filter[filterType](events) || [];
 
     switch (this.#currentSortType) {
       case SortType.DAY:
@@ -105,7 +113,7 @@ export default class TripPresenter {
    */
   #renderEvent(event) {
     const eventPresenter = new EventPresenter({
-      eventListContainer: this.#eventListComponent.element,
+      eventListContainer: this.#tripComponent.element,
       onEventChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
@@ -152,12 +160,18 @@ export default class TripPresenter {
         this.#clearTrip({resetSortType: true});
         this.#renderTrip();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingTripComponent);
+        this.#renderTrip();
+        break;
     }
   };
 
   #handleAddEventForm = () => {
     this.#addEvent();
-    this.#addEventButton.element.disabled = true;
+    this.#renderAddEventButton({disabled: true});
+    // this.#addEventButton.element.disabled = true;
   };
 
   #addEvent() {
@@ -167,7 +181,8 @@ export default class TripPresenter {
   }
 
   #onAddEventDestroy = () => {
-    this.#addEventButton.element.disabled = false;
+    this.#renderAddEventButton({disabled: false});
+    // this.#addEventButton.element.disabled = false;
   };
 
   #clearTrip({resetSortType = false} = {}) {
@@ -176,7 +191,8 @@ export default class TripPresenter {
     this.#eventPresenter.clear();
 
     remove(this.#sortComponent);
-    remove(this.#emptyEventListComponent);
+    remove(this.#loadingTripComponent);
+    remove(this.#emptyTripComponent);
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
@@ -184,11 +200,16 @@ export default class TripPresenter {
   }
 
   #renderTrip() {
+    if (this.#isLoading) {
+      render(this.#loadingTripComponent, this.#tripContainer);
+      return;
+    }
+
     this.#renderSort();
-    render(this.#eventListComponent, this.#tripContainer);
+    render(this.#tripComponent, this.#tripContainer);
 
     if (this.events.length === 0) {
-      return render(this.#emptyEventListComponent, this.#tripContainer);
+      return render(this.#emptyTripComponent, this.#tripContainer);
     }
 
     for (const event of this.events) {
@@ -229,12 +250,25 @@ export default class TripPresenter {
     filterPresenter.init();
   }
 
+  #renderAddEventButton({disabled = false} = {}) {
+    const prevAddEventButton = this.#addEventButton;
+    this.#addEventButton = new AddEventButtonView({disabled, onClick: this.#handleAddEventForm});
+
+    if (prevAddEventButton === null) {
+      render(this.#addEventButton, this.#headerContainer);
+
+      return;
+    }
+
+    replace(this.#addEventButton, prevAddEventButton);
+    remove(prevAddEventButton);
+  }
+
   /**
    * function to render page components
    */
   init() {
-    this.#addEventButton = new AddEventButtonView({ onClick: this.#handleAddEventForm });
-    render(this.#addEventButton, this.#headerContainer);
+    this.#renderAddEventButton();
 
     this.#renderFilters();
     this.#renderTrip();
