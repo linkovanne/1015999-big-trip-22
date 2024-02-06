@@ -1,7 +1,7 @@
 import EventView from '../view/event-view';
 import EditEventFormView from '../view/edit-event-form-view';
 import {remove, render, replace} from '../framework/render';
-import {UpdateType, UserAction} from '../const';
+import {FormScene, UpdateType, UserAction} from '../const';
 import {isKeyType} from '../utils/common';
 
 const MODE = {
@@ -63,7 +63,6 @@ export default class EventPresenter {
       UpdateType.MINOR,
       event
     );
-    this.#replaceFormToItem();
   };
 
   #handleEventDelete = (event) => {
@@ -111,6 +110,7 @@ export default class EventPresenter {
       onFavouriteClick: () => this.#favouriteClickHandler()
     });
     this.#editEventForm = new EditEventFormView({
+      scene: FormScene.EDIT,
       event,
       offers,
       destinations,
@@ -140,6 +140,38 @@ export default class EventPresenter {
     if (this.#mode !== MODE.VIEW) {
       this.#replaceFormToItem();
     }
+  }
+
+  setSaving() {
+    if (this.#mode === MODE.EDIT) {
+      this.#editEventForm.updateElement({
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === MODE.EDIT) {
+      this.#editEventForm.updateElement({
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === MODE.VIEW) {
+      this.#eventItem.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#editEventForm.updateElement({
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editEventForm.shake(resetFormState);
   }
 
   destroy() {
