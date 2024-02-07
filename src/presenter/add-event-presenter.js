@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import {remove, render, RenderPosition} from '../framework/render';
 import EditEventFormView from '../view/edit-event-form-view';
 import {FormScene, UpdateType, UserAction} from '../const';
@@ -33,12 +32,12 @@ export default class AddEventPresenter {
   #generateEmptyForm() {
     return {
       basePrice: 0,
-      dateFrom: dayjs().startOf('day').toISOString(),
-      dateTo: dayjs().endOf('day').toISOString(),
-      destination: this.#destinations[0]?.id || '',
+      dateFrom: null,
+      dateTo: null,
+      destination: '',
       isFavorite: false,
       offers: [],
-      type: this.#offers[0]?.type
+      type: 'flight'
     };
   }
 

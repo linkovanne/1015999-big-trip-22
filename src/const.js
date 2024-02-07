@@ -1,3 +1,9 @@
+const FlatpickrConfig = {
+  dateFormat: 'd/m/y H:i',
+  enableTime: true,
+  'time_24hr': true
+};
+
 /**
  * @typedef {('UPDATE_EVENT' | 'ADD_EVENT' | 'DELETE_EVENT')} UserActionType
  */
@@ -62,4 +68,4 @@ const FormScene = {
   EDIT: 'EDIT',
 };
 
-export {FilterType, SortType, UserAction, UpdateType, FormScene};
+export {FlatpickrConfig, FilterType, SortType, UserAction, UpdateType, FormScene};
