@@ -19,11 +19,10 @@ export default class FilterPresenter {
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
-
   /**
    * Filter object
    * @typedef {Object} FilterOfferObjectData
-   * @property {string} type
+   * @property {IFilterType} type
    * @property {number} count
    */
   /**

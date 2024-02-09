@@ -51,7 +51,7 @@ export default class TripPresenter {
   #addEventButton = null;
   #sortComponent = null;
   #tripComponent = new TripView();
-  #emptyTripComponent = new EmptyTripView();
+  #emptyTripComponent = null;
   #loadingTripComponent = new LoadingTripView();
   #failedTripComponent = new FailedTripView();
   #uiBlocker = new UiBlocker({
@@ -236,6 +236,12 @@ export default class TripPresenter {
     }
   }
 
+  #renderEmptyTrip() {
+    this.#emptyTripComponent = new EmptyTripView({filterType: this.#filterModel.filter});
+
+    return render(this.#emptyTripComponent, this.#tripContainer);
+  }
+
   #renderTrip() {
     if (this.#isLoading) {
       render(this.#loadingTripComponent, this.#tripContainer);
@@ -246,7 +252,7 @@ export default class TripPresenter {
     render(this.#tripComponent, this.#tripContainer);
 
     if (this.events.length === 0) {
-      return render(this.#emptyTripComponent, this.#tripContainer);
+      this.#renderEmptyTrip();
     }
 
     for (const event of this.events) {
