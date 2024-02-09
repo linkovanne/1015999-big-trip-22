@@ -54,7 +54,7 @@ function sortByTime(eventA, eventB) {
   const eventAHours = dayjs(eventA.dateTo).diff(eventA.dateFrom, 'hour', true);
   const eventBHours = dayjs(eventB.dateTo).diff(eventB.dateFrom, 'hour', true);
 
-  return eventAHours - eventBHours;
+  return eventBHours - eventAHours;
 }
 
 /**
@@ -64,7 +64,7 @@ function sortByTime(eventA, eventB) {
  * @returns {number}
  */
 function sortByPrice(eventA, eventB) {
-  return eventA.basePrice - eventB.basePrice;
+  return eventB.basePrice - eventA.basePrice;
 }
 
 export {isFutureEvent, isCurrentEvent, isPastEvent, sortByDay, sortByTime, sortByPrice};
