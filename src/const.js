@@ -1,4 +1,4 @@
-const FlatpickrConfig = {
+const FLATPICKR_CONFIG = {
   dateFormat: 'd/m/y H:i',
   enableTime: true,
   'time_24hr': true
@@ -68,4 +68,4 @@ const FormScene = {
   EDIT: 'EDIT',
 };
 
-export {FlatpickrConfig, FilterType, SortType, UserAction, UpdateType, FormScene};
+export {FLATPICKR_CONFIG, FilterType, SortType, UserAction, UpdateType, FormScene};

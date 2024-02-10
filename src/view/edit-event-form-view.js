@@ -2,7 +2,7 @@ import flatpickr from 'flatpickr';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humaniseFullDate} from '../utils/date';
 import {isControlType} from '../utils/common';
-import {FlatpickrConfig, FormScene} from '../const';
+import {FLATPICKR_CONFIG, FormScene} from '../const';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -263,7 +263,7 @@ export default class EditEventFormView extends AbstractStatefulView {
     this.#datepickerFrom = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
-        ...FlatpickrConfig,
+        ...FLATPICKR_CONFIG,
         defaultDate: this._state.dateFrom,
         maxDate: this._state.dateTo,
         onChange: this.#dateFromChangeHandler
@@ -272,7 +272,7 @@ export default class EditEventFormView extends AbstractStatefulView {
     this.#datepickerTo = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
-        ...FlatpickrConfig,
+        ...FLATPICKR_CONFIG,
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
         onChange: this.#dateToChangeHandler

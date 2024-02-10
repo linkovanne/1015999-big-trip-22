@@ -4,7 +4,7 @@ import {remove, render, replace} from '../framework/render';
 import {FormScene, UpdateType, UserAction} from '../const';
 import {isKeyType} from '../utils/common';
 
-const MODE = {
+const Mode = {
   VIEW: 'VIEW',
   EDIT: 'EDIT'
 };
@@ -33,9 +33,9 @@ export default class EventPresenter {
   #event = null;
 
   /**
-   * @type {MODE}
+   * @type {Mode}
    */
-  #mode = MODE.VIEW;
+  #mode = Mode.VIEW;
 
   constructor({eventListContainer, onEventChange, onModeChange}) {
     this.#eventListContainer = eventListContainer;
@@ -47,14 +47,14 @@ export default class EventPresenter {
     replace(this.#editEventForm, this.#eventItem);
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
-    this.#mode = MODE.EDIT;
+    this.#mode = Mode.EDIT;
   };
 
   #replaceFormToItem = () => {
     this.#editEventForm.reset(this.#event);
     replace(this.#eventItem, this.#editEventForm);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-    this.#mode = MODE.VIEW;
+    this.#mode = Mode.VIEW;
   };
 
   #handleFormSubmit = (event) => {
@@ -124,11 +124,11 @@ export default class EventPresenter {
       return;
     }
 
-    if(this.#mode === MODE.VIEW) {
+    if(this.#mode === Mode.VIEW) {
       replace(this.#eventItem, prevEventItem);
     }
 
-    if(this.#mode === MODE.EDIT) {
+    if(this.#mode === Mode.EDIT) {
       replace(this.#editEventForm, prevEditEventForm);
     }
 
@@ -137,13 +137,13 @@ export default class EventPresenter {
   }
 
   resetView() {
-    if (this.#mode !== MODE.VIEW) {
+    if (this.#mode !== Mode.VIEW) {
       this.#replaceFormToItem();
     }
   }
 
   setSaving() {
-    if (this.#mode === MODE.EDIT) {
+    if (this.#mode === Mode.EDIT) {
       this.#editEventForm.updateElement({
         isSaving: true,
       });
@@ -151,7 +151,7 @@ export default class EventPresenter {
   }
 
   setDeleting() {
-    if (this.#mode === MODE.EDIT) {
+    if (this.#mode === Mode.EDIT) {
       this.#editEventForm.updateElement({
         isDeleting: true,
       });
@@ -159,7 +159,7 @@ export default class EventPresenter {
   }
 
   setAborting() {
-    if (this.#mode === MODE.VIEW) {
+    if (this.#mode === Mode.VIEW) {
       this.#eventItem.shake();
       return;
     }

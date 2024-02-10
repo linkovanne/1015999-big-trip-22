@@ -41,9 +41,10 @@ function humaniseTime(date) {
  * @returns {string}
  */
 function getTimeOnWay(dateFrom, dateTo) {
+  const SECONDS = 60;
   const diff = dayjs(dateTo).diff(dateFrom, 'hour', true);
   const hours = Math.floor(diff);
-  const minutes = Math.floor((diff - hours) * 60);
+  const minutes = Math.floor((diff - hours) * SECONDS);
 
   return dateFrom && dateTo && `${hours}H ${minutes}M`;
 }
