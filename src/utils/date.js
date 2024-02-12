@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
-const SECONDS = 60;
+const SECONDS_PER_MINUTE = 60;
 const FULL_DATE_FORMAT = 'DD/MM/YY HH:mm';
 const DATE_FORMAT = 'MMM D';
 const TIME_FORMAT = 'HH:mm';
@@ -44,7 +44,7 @@ function humaniseTime(date) {
 function getTimeOnWay(dateFrom, dateTo) {
   const diff = dayjs(dateTo).diff(dateFrom, 'hour', true);
   const hours = Math.floor(diff);
-  const minutes = Math.floor((diff - hours) * SECONDS);
+  const minutes = Math.floor((diff - hours) * SECONDS_PER_MINUTE);
 
   return dateFrom && dateTo && `${hours}H ${minutes}M`;
 }
