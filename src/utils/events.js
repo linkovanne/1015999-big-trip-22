@@ -19,10 +19,10 @@ function isFutureEvent(date) {
  * @returns {boolean}
  */
 function isCurrentEvent(dateFrom, dateTo) {
-  const startsToday = dayjs(dateFrom).diff(CURRENT_DATE_START) >= 0 && dayjs(dateFrom).diff(CURRENT_DATE_END) <= 0;
-  const endsToday = dayjs(dateTo).diff(CURRENT_DATE_START) >= 0 && dayjs(dateTo).diff(CURRENT_DATE_END) <= 0;
+  const isStartingToday = dayjs(dateFrom).diff(CURRENT_DATE_START) >= 0 && dayjs(dateFrom).diff(CURRENT_DATE_END) <= 0;
+  const isEndingToday = dayjs(dateTo).diff(CURRENT_DATE_START) >= 0 && dayjs(dateTo).diff(CURRENT_DATE_END) <= 0;
 
-  return startsToday || endsToday;
+  return isStartingToday || isEndingToday;
 }
 
 /**
